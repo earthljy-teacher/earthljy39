@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전자기 유도 탐구 실험실 | EARTH LJY</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --font:'a시네마L','a시네마M','a시네마','aCinemaL','aCinema','Jua',sans-serif;
+  --bg:#eef3ff; --ink:#2b2f3a; --sub:#6b7280; --line:#dfe6f5;
+  --red:#e5484d; --blue:#2f6fec; --green:#1a9b57; --orange:#e67700; --purple:#8b5cf6; --teal:#0b9a99; --pink:#d6336c;
+}
+*{box-sizing:border-box;font-weight:400 !important;}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;}
+button,input,select,textarea{font-family:var(--font);font-size:inherit;color:inherit;}
+.c-red{color:var(--red)} .c-blue{color:var(--blue)} .c-green{color:var(--green)} .c-orange{color:var(--orange)}
+.c-purple{color:var(--purple)} .c-teal{color:var(--teal)} .c-pink{color:var(--pink)} .c-sub{color:var(--sub)}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:linear-gradient(90deg,#dbe8ff,#e6fbef);border-bottom:3px solid #c9d8f5;position:sticky;top:0;z-index:30}
+.title{display:flex;gap:12px;align-items:center;min-width:0}
+.t-icon{font-size:28px;width:50px;height:50px;border-radius:15px;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 #c5d3ee;flex-shrink:0}
+.t-main{font-size:23px;color:var(--blue)}
+.t-sub{font-size:14px;color:var(--sub)}
+.brand{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.brand img{height:62px;display:block}
+.mail{font-size:13px;color:var(--blue);text-decoration:none}
+@media(max-width:640px){.t-main{font-size:18px}.t-sub{display:none}.brand img{height:46px}.mail{font-size:11px}}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:12px 18px 4px;max-width:1100px;margin:0 auto}
+.tab{border:none;background:#fff;border-radius:12px;padding:8px 13px;box-shadow:0 3px 0 #cfd9ee;cursor:pointer;font-size:15px;color:#4b5563}
+.tab.on{background:var(--blue);color:#fff;box-shadow:0 3px 0 #1f4fb8}
+.tab.lock{opacity:.45}
+.tab.done::after{content:' ✓';color:var(--green)}
+.tab.on.done::after{color:#c9ffd9}
+
+main{max-width:1100px;margin:0 auto;padding:0 14px 70px}
+.card{background:#fff;border-radius:18px;padding:16px 18px;margin:12px 0;box-shadow:0 4px 0 #d6e0f3}
+.hidden{display:none !important}
+h2{font-size:22px;margin:2px 0 8px;color:var(--blue)}
+h3{font-size:18px;margin:14px 0 6px;color:var(--purple)}
+p{line-height:1.75;margin:6px 0}
+.goal{background:#f3f0ff;border-radius:12px;padding:10px 14px;line-height:1.7}
+.tip{font-size:14px;color:var(--sub);margin:6px 2px}
+
+.btn{border:none;border-radius:12px;padding:9px 16px;cursor:pointer;background:#e8eefc;color:#2b2f3a;box-shadow:0 3px 0 #c3cfea;font-size:15px;transition:transform .05s;touch-action:manipulation}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c3cfea}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.b-blue{background:#2f6fec;color:#fff;box-shadow:0 3px 0 #1f4fb8}
+.b-green{background:#1fae63;color:#fff;box-shadow:0 3px 0 #13814a}
+.b-orange{background:#f59f00;color:#fff;box-shadow:0 3px 0 #c27c00}
+.b-red{background:#f06567;color:#fff;box-shadow:0 3px 0 #c44547}
+.b-purple{background:#8b5cf6;color:#fff;box-shadow:0 3px 0 #6d3fd6}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+
+/* lab */
+.lab-status{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.stat{background:#f5f8ff;border-radius:12px;padding:7px 10px;text-align:center}
+.stat .lbl{display:block;font-size:13px;color:var(--sub)}
+.stat .val{font-size:18px}
+@media(max-width:700px){.lab-status{grid-template-columns:repeat(2,1fr)}}
+.canvas-wrap{border-radius:14px;overflow:hidden;border:2px solid #e3eaf8;background:#fbfdff}
+canvas#cv{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:10px}
+.ctl-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctl-title{font-size:14px;color:var(--sub)}
+.seg{display:inline-flex;background:#eef2fb;border-radius:12px;padding:3px;gap:3px}
+.seg button{border:none;background:transparent;padding:7px 12px;border-radius:10px;cursor:pointer;color:#4b5563;font-size:15px;touch-action:manipulation}
+.seg button.on{background:#fff;color:var(--blue);box-shadow:0 2px 0 #c9d6f2}
+.toggles label{display:inline-flex;align-items:center;gap:5px;font-size:15px;cursor:pointer;background:#f5f8ff;padding:6px 10px;border-radius:10px}
+.toggles input{width:18px;height:18px;accent-color:var(--blue)}
+.ctl-guide{margin:10px 0 2px;background:#fff8e6;border-radius:12px;padding:8px 12px;line-height:1.7;font-size:15px}
+.ctl-guide .fix{color:var(--sub);font-size:14px}
+.logbox{margin-top:10px;background:#f8faff;border-radius:12px;padding:8px 12px}
+.logbox summary{cursor:pointer;color:var(--teal)}
+.log{max-height:170px;overflow:auto;font-size:14px;line-height:1.7;margin-top:6px}
+
+/* mission parts */
+.checklist{list-style:none;padding:0;margin:8px 0}
+.checklist li{padding:8px 12px;border-radius:10px;background:#f6f8fd;margin:6px 0;line-height:1.6}
+.checklist li.ok{background:#e8f8ee;color:#137a43}
+.checklist li::before{content:'⬜ '}
+.checklist li.ok::before{content:'✅ '}
+.tbl-wrap{overflow-x:auto}
+table.rec{width:100%;border-collapse:collapse;font-size:15px;min-width:520px}
+table.rec th,table.rec td{border:1px solid var(--line);padding:7px 6px;text-align:center;vertical-align:middle}
+table.rec th{background:#f0f4ff;color:#4b5563}
+table.rec td.case{text-align:left}
+tr.row-bad td{background:#fff3f3}
+tr.row-good td{background:#effbf4}
+.pick{display:inline-flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.pick button{border:none;border-radius:9px;padding:6px 10px;background:#eef2fb;cursor:pointer;font-size:14px;color:#4b5563;touch-action:manipulation}
+.pick button.on{background:#2f6fec;color:#fff}
+.pick button:disabled{opacity:.4;cursor:not-allowed}
+.fb{border-radius:12px;padding:10px 12px;margin:8px 0;line-height:1.7}
+.fb.good{background:#e8f8ee;color:#137a43}
+.fb.bad{background:#fff0f0;color:#c0392b}
+.fb.info{background:#eef4ff;color:#2f5fc4}
+.concept{background:linear-gradient(135deg,#fff8e6,#eefaf3);border-radius:14px;padding:12px 14px;margin-top:10px;line-height:1.75}
+.concept .ttl{color:var(--orange)}
+.mc{margin:10px 0}
+.mc .q{margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;border:2px solid #e3e9f6;background:#fbfcff;border-radius:12px;padding:9px 12px;margin:6px 0;cursor:pointer;font-size:15px;line-height:1.5;color:#2b2f3a;touch-action:manipulation}
+.opt:disabled{cursor:default}
+.opt.right{background:#e3f7ea;border-color:#8ad3a8;color:#137a43}
+.opt.wrong{background:#ffecec;border-color:#f3a5a5;color:#c0392b;opacity:.8}
+.qcard{border:2px solid #edf1fa;border-radius:14px;padding:12px 14px;margin:12px 0}
+.qnum{color:var(--teal)}
+textarea{width:100%;min-height:110px;border-radius:12px;border:2px solid #dbe3f3;padding:10px;font-size:16px;line-height:1.6;resize:vertical}
+input.txt{border-radius:12px;border:2px solid #dbe3f3;padding:9px 12px;font-size:16px;width:100%;max-width:260px}
+.bar{height:10px;background:#edf1fa;border-radius:6px;overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd43b,#ff6b6b)}
+.start-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.start-grid{grid-template-columns:1fr}}
+.legend-item{display:flex;align-items:center;gap:8px;margin:5px 0}
+.sw{width:30px;height:8px;border-radius:4px;display:inline-block}
+
+/* result */
+#resultCard{max-width:800px;margin:0 auto;background:#fff;border-radius:18px;padding:22px;border:3px solid #dbe6fb}
+.rc-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:2px dashed #dbe3f3;padding-bottom:12px}
+.rc-head img{height:70px}
+.rc-title{font-size:24px;color:var(--blue)}
+.rc-info{display:flex;gap:14px;align-items:center;margin:14px 0;flex-wrap:wrap}
+.grade{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:52px;color:#fff;flex-shrink:0}
+.score-tbl{width:100%;border-collapse:collapse;font-size:15px}
+.score-tbl td{padding:6px 4px;border-bottom:1px solid #eef2f9}
+.score-tbl td.pt{text-align:right;white-space:nowrap}
+.ans{background:#f8faff;border-radius:12px;padding:10px 12px;line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.rc-sec{margin-top:16px}
+.rc-sec .h{color:var(--purple);font-size:17px;margin-bottom:6px}
+.feedback-text{line-height:1.85}
+.up-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff8ec;border-radius:12px;padding:10px 12px;margin:8px 0;flex-wrap:wrap}
+.up-item .txt{flex:1;min-width:200px;line-height:1.6}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b2f3a;color:#fff;padding:10px 18px;border-radius:12px;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center;line-height:1.5}
+.toast.show{opacity:.95}
+.float-back{position:fixed;right:16px;bottom:18px;z-index:40}
+.modal{position:fixed;inset:0;background:rgba(20,30,50,.62);display:flex;align-items:center;justify-content:center;z-index:90;padding:12px}
+.modal-box{background:#fff;border-radius:18px;max-width:760px;width:100%;max-height:94vh;display:flex;flex-direction:column;padding:14px;gap:8px}
+.preview-scroll{overflow:auto;flex:1;min-height:200px;border:2px solid #e3eaf8;border-radius:12px;background:#f5f7fb;-webkit-overflow-scrolling:touch}
+.preview-scroll img{width:100%;display:block;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.save-guide{font-size:14px;line-height:1.7;background:#eef4ff;border-radius:12px;padding:8px 12px;color:#2f5fc4}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="title">
+    <div class="t-icon">⚡</div>
+    <div>
+      <div class="t-main">전자기 유도 탐구 실험실</div>
+      <div class="t-sub">통합과학 · 자석과 코일로 전기를 만들어 보자!</div>
+    </div>
+  </div>
+  <div class="brand">
+    <img id="logoImg" alt="EARTH LJY 로고">
+    <a class="mail" href="mailto:earthljy@ai.jne.kr">earthljy@ai.jne.kr</a>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main>
+<!-- ===== 0. 시작 ===== -->
+<section id="sec0" class="card">
+  <h2>🔬 실험실에 온 것을 환영해요!</h2>
+  <p>눈에 보이지 않는 <span class="c-blue">자기장의 변화</span>와 <span class="c-orange">유도 전류의 흐름</span>을 화면 속 모형으로 직접 관찰해 봐요. 미션 4개를 해결하고 학습 점검까지 마치면 <span class="c-green">미션 성공 결과지</span>를 받을 수 있어요.</p>
+  <div class="start-grid">
+    <div>
+      <h3>📌 학생 정보</h3>
+      <p><input id="inSid" class="txt" placeholder="학번 (예: 10101)" inputmode="numeric"></p>
+      <p><input id="inName" class="txt" placeholder="이름"></p>
+      <div class="btn-row"><button class="btn b-blue" id="btnStart">실험 시작하기 ▶</button></div>
+    </div>
+    <div>
+      <h3>🗺️ 화면 읽는 법</h3>
+      <div class="legend-item"><span class="sw" style="background:#2f6fec"></span><span><span class="c-blue">파란 화살표</span> : 자석이 만드는 자기장</span></div>
+      <div class="legend-item"><span class="sw" style="background:#f08c00"></span><span><span class="c-orange">주황 화살표</span> : 유도 전류가 코일에 만드는 유도 자기장</span></div>
+      <div class="legend-item"><span class="sw" style="background:#ffd43b"></span><span><span class="c-orange">노란 점</span> : 코일과 도선을 따라 흐르는 유도 전류</span></div>
+      <div class="legend-item"><span class="sw" style="background:#e5484d"></span><span><span class="c-red">N극(빨강)</span>, <span class="c-blue">S극(파랑)</span></span></div>
+      <p class="tip">검류계 바늘이 움직이면 전류가 흐르는 거예요. 바늘이 기운 방향은 전류의 방향을, 기운 정도는 전류의 세기를 알려 줘요.</p>
+    </div>
+  </div>
+  <h3>🧭 탐구 순서</h3>
+  <ul class="checklist" style="list-style:none">
+    <li style="background:#f6f8fd">미션 1. 멈춰 있는 자석의 비밀 — <span class="c-teal">언제 전류가 흐를까?</span></li>
+    <li style="background:#f6f8fd">미션 2. 같은 '가까워짐'의 두 얼굴 — <span class="c-teal">자석·코일을 움직일 때 자기장의 변화</span></li>
+    <li style="background:#f6f8fd">미션 3. 유도 전류 방향 찾기 챌린지 — <span class="c-teal">유도 전류의 방향</span></li>
+    <li style="background:#f6f8fd">미션 4. 최대 밝기 발전소 — <span class="c-teal">유도 전류의 세기</span></li>
+    <li style="background:#f6f8fd">학습 점검 → 미션 성공 (등급 평가와 결과 이미지 저장)</li>
+  </ul>
+</section>
+
+<!-- ===== 공용 실험 무대 ===== -->
+<section id="lab" class="card hidden">
+  <div class="lab-status">
+    <div class="stat"><span class="lbl">코일을 통과하는 자기장</span><span class="val" id="stFlux">변화 없음</span></div>
+    <div class="stat"><span class="lbl">유도 전류</span><span class="val" id="stCur">흐르지 않음</span></div>
+    <div class="stat"><span class="lbl" id="stNeedleL">검류계 바늘</span><span class="val" id="stNeedle">가운데 (0)</span></div>
+    <div class="stat"><span class="lbl">LED 밝기</span><span class="val" id="stLed">0%</span></div>
+  </div>
+  <div class="canvas-wrap"><canvas id="cv"></canvas></div>
+  <div class="ctl-guide" id="ctlGuide"></div>
+  <div class="controls">
+    <div class="ctl-group" id="cgMover"><span class="ctl-title">움직일 물체</span>
+      <div class="seg" id="segMover"><button data-v="magnet" class="on">🧲 자석</button><button data-v="coil">🌀 코일</button></div></div>
+    <div class="ctl-group" id="cgPole"><span class="ctl-title">코일 쪽을 향한 극</span>
+      <div class="seg" id="segPole"><button data-v="N" class="on">N극</button><button data-v="S">S극</button></div></div>
+    <div class="ctl-group"><span class="ctl-title">움직이기</span>
+      <button class="btn b-blue" id="btnIn">⇢⇠ 가까이</button>
+      <button class="btn b-orange" id="btnOut">⇠⇢ 멀리</button>
+      <button class="btn" id="btnStop">■ 정지</button>
+      <button class="btn" id="btnHome">↺ 처음 위치로</button></div>
+  </div>
+  <div class="controls" id="rowFactors">
+    <div class="ctl-group"><span class="ctl-title">이동 속력</span>
+      <div class="seg" id="segSpeed"><button data-v="0">느림</button><button data-v="1" class="on">보통</button><button data-v="2">빠름</button></div></div>
+    <div class="ctl-group"><span class="ctl-title">코일 감은 수</span>
+      <div class="seg" id="segTurns"><button data-v="0">적음(100회)</button><button data-v="1" class="on">보통(200회)</button><button data-v="2">많음(300회)</button></div></div>
+    <div class="ctl-group"><span class="ctl-title">자석 세기</span>
+      <div class="seg" id="segMag"><button data-v="0">약</button><button data-v="1" class="on">중</button><button data-v="2">강</button></div></div>
+  </div>
+  <div class="controls toggles">
+    <label><input type="checkbox" id="tgField" checked> 자기장 화살표 보기</label>
+    <label><input type="checkbox" id="tgParticle" checked> 전류 입자 보기</label>
+    <label id="tgInducedL"><input type="checkbox" id="tgInduced" checked> 유도 자기장·인력/척력 보기</label>
+  </div>
+  <p class="tip" id="ctlTip"></p>
+  <details class="logbox" open><summary>📝 자동 관찰 기록 (최근 실험이 위에 쌓여요)</summary><div class="log" id="obsLog"><span class="c-sub">아직 기록이 없어요. 자석이나 코일을 움직여 보세요.</span></div></details>
+</section>
+
+<!-- ===== 미션 1 ===== -->
+<section id="sec1" class="card hidden">
+  <h2>🧲 미션 1. 멈춰 있는 자석의 비밀을 풀어라!</h2>
+  <div class="goal">자석과 코일 중 <span class="c-purple">하나만 움직여도</span> 돼요. 검류계 바늘을 움직여 전류를 만들어 보고, 모두 <span class="c-red">멈춰 있을 때</span> 바늘이 어떻게 되는지 관찰해 보세요.</div>
+  <ul class="checklist" id="m1List"></ul>
+  <div id="m1Q"></div>
+  <div id="m1Concept"></div>
+  <div class="btn-row"><button class="btn b-red" id="m1Reset">↺ 미션 1 다시 하기</button><button class="btn b-green" id="m1Next" disabled>미션 2로 ▶</button></div>
+</section>
+
+<!-- ===== 미션 2 ===== -->
+<section id="sec2" class="card hidden">
+  <h2>🔄 미션 2. 같은 '가까워짐'의 두 가지 얼굴</h2>
+  <div class="goal">N극을 코일 쪽으로 향하게 두고 네 가지 경우를 실험하세요. 실험한 줄만 기록할 수 있어요. 상태 표시창의 <span class="c-blue">코일을 통과하는 자기장</span>과 <span class="c-red">검류계 바늘</span>을 잘 보고 기록하세요.</div>
+  <p class="tip">①② : 움직일 물체 <span class="c-blue">자석</span> · ③④ : 움직일 물체 <span class="c-teal">코일</span> 로 바꾸어 실험해요.</p>
+  <div class="tbl-wrap"><table class="rec" id="m2Tbl"></table></div>
+  <div id="m2Fb"></div>
+  <div class="btn-row"><button class="btn b-purple" id="m2Check">기록 확인하기</button></div>
+  <div id="m2Q"></div>
+  <div id="m2Concept"></div>
+  <div class="btn-row"><button class="btn b-red" id="m2Reset">↺ 미션 2 다시 하기</button><button class="btn b-green" id="m2Next" disabled>미션 3으로 ▶</button></div>
+</section>
+
+<!-- ===== 미션 3 ===== -->
+<section id="sec3" class="card hidden">
+  <h2>🧭 미션 3. 유도 전류의 방향 찾기 챌린지</h2>
+  <div class="goal">'코일 쪽을 향한 극'을 N극·S극으로 바꾸며 네 가지 경우를 실험하고, <span class="c-pink">코일에 흐르는 유도 전류의 방향</span>을 기록하세요. 그다음 <span class="c-orange">언제 유도 전류의 방향이 반대가 되는지</span> 규칙을 찾아요.</div>
+  <p class="tip">👁️ 실험 화면 왼쪽 아래의 <span class="c-teal">'자석 쪽에서 본 코일'</span> 창을 보세요. 자석이 있는 쪽에서 코일을 바라볼 때 노란 전류 입자가 <span class="c-orange">시계 방향(↻)</span>으로 도는지, <span class="c-blue">시계 반대 방향(↺)</span>으로 도는지 관찰해요.</p>
+  <p class="tip">🔍 '유도 자기장·인력/척력 보기'를 켜 두면 코일 끝에 생기는 극과 자석이 받는 힘도 볼 수 있어요.</p>
+  <div class="tbl-wrap"><table class="rec" id="m3Tbl"></table></div>
+  <div id="m3Fb"></div>
+  <div class="btn-row"><button class="btn b-purple" id="m3Check">기록 확인하기</button></div>
+  <div id="m3Pairs"></div>
+  <div id="m3Concept"></div>
+  <div class="btn-row"><button class="btn b-red" id="m3Reset">↺ 미션 3 다시 하기</button><button class="btn b-green" id="m3Next" disabled>미션 4로 ▶</button></div>
+</section>
+
+<!-- ===== 미션 4 ===== -->
+<section id="sec4" class="card hidden">
+  <h2>💡 미션 4. 최대 밝기 발전소를 가동하라!</h2>
+  <div class="goal">LED 밝기를 최대로 높여 보세요. 공정한 비교를 위해 <span class="c-purple">한 가지 조건만 바꾸고 나머지 조건은 같게</span> 하여 실험해요. (버튼으로 움직인 실험만 비교 기록에 쓰여요.)</div>
+  <p class="tip">💡 매번 <span class="c-teal">↺ 처음 위치로</span>를 누른 뒤 '가까이'를 누르면 출발 거리가 같아져 비교하기 좋아요.</p>
+  <ul class="checklist" id="m4List"></ul>
+  <h3>📊 실험 기록</h3>
+  <div class="tbl-wrap"><table class="rec" id="m4Tbl"></table></div>
+  <div id="m4Concl"></div>
+  <div id="m4Concept"></div>
+  <div class="btn-row"><button class="btn b-red" id="m4Reset">↺ 미션 4 다시 하기</button><button class="btn b-green" id="m4Next" disabled>학습 점검으로 ▶</button></div>
+</section>
+
+<!-- ===== 학습 점검 ===== -->
+<section id="sec5" class="card hidden">
+  <h2>📝 학습 점검</h2>
+  <p>객관식은 <span class="c-green">처음 시도에 맞히면</span> 점수가 높아요. 틀리면 피드백을 읽고 다시 골라 보세요. 서술형은 제출하면 빠진 내용을 알려 주고, 고쳐서 다시 제출할 수 있어요.</p>
+  <div id="quizBox"></div>
+  <h3>✍️ 서술형 문항</h3>
+  <div id="writeBox"></div>
+  <div class="btn-row"><button class="btn b-red" id="quizReset">↺ 객관식 다시 풀기</button><button class="btn b-green" id="quizNext" disabled>미션 성공 확인하기 ▶</button></div>
+</section>
+
+<!-- ===== 미션 성공 ===== -->
+<section id="sec6" class="hidden">
+  <div class="card">
+    <div id="resultCard"></div>
+    <div class="btn-row" style="justify-content:center"><button class="btn b-blue" id="btnMakeImg">📷 결과 이미지 저장하기</button></div>
+  </div>
+  <div class="card" id="upgradeBox"></div>
+</section>
+</main>
+
+<button class="btn b-purple float-back hidden" id="floatBack">🏆 결과로 돌아가기</button>
+<div class="toast" id="toast"></div>
+
+<div class="modal hidden" id="imgModal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="c-blue" style="font-size:18px">🖼️ 결과 이미지 미리보기</span><button class="btn" id="btnCloseModal">닫기 ✕</button></div>
+    <div class="preview-scroll"><img id="previewImg" alt="미션 성공 결과 이미지"></div>
+    <div class="save-guide" id="saveGuide"></div>
+    <div class="btn-row" style="justify-content:center;margin-top:0"><button class="btn b-green" id="btnSaveImg">💾 이미지 저장하기</button></div>
+  </div>
+</div>
+
+<script>
+/* ================= 기본 도구 ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const FONT = "'a시네마L','a시네마M','a시네마','aCinemaL','aCinema','Jua',sans-serif";
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let toastTimer = null;
+function toast(msg, ms){
+  const t = $('#toast'); t.innerHTML = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), ms || 2600);
+}
+let AC = null;
+function beep(f, d, type, vol, when){
+  try{
+    if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if(AC.state === 'suspended') AC.resume();
+    const t = AC.currentTime + (when||0);
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || 0.07, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + 0.03);
+  }catch(e){}
+}
+const SND = {
+  click: ()=>beep(660,.07,'triangle',.04),
+  ok: ()=>{beep(660,.12,'sine',.07); beep(990,.18,'sine',.07,.1);},
+  bad: ()=>beep(200,.2,'square',.035),
+  win: ()=>[523,659,784,1046].forEach((f,i)=>beep(f,.2,'triangle',.06,i*.12))
+};
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ================= 로고 ================= */
+function makeLogo(){
+  const c = document.createElement('canvas'); c.width = 520; c.height = 120;
+  const g = c.getContext('2d');
+  const cx = 60, cy = 60, r = 46;
+  const grd = g.createRadialGradient(cx-15, cy-18, 6, cx, cy, r);
+  grd.addColorStop(0,'#8ad8ff'); grd.addColorStop(1,'#1f6fd1');
+  g.fillStyle = grd; g.beginPath(); g.arc(cx,cy,r,0,Math.PI*2); g.fill();
+  g.save(); g.beginPath(); g.arc(cx,cy,r,0,Math.PI*2); g.clip();
+  g.fillStyle = '#4cc26e';
+  g.beginPath(); g.ellipse(cx-17,cy-14,19,12,-0.5,0,Math.PI*2); g.fill();
+  g.beginPath(); g.ellipse(cx+20,cy+13,15,20,0.4,0,Math.PI*2); g.fill();
+  g.beginPath(); g.ellipse(cx-20,cy+27,10,7,0,0,Math.PI*2); g.fill();
+  g.restore();
+  g.strokeStyle = '#ffb703'; g.lineWidth = 5;
+  g.beginPath(); g.ellipse(cx,cy,r+10,15,-0.35,0,Math.PI*2); g.stroke();
+  g.textBaseline = 'alphabetic';
+  g.font = '54px ' + FONT; g.fillStyle = '#1f6fd1'; g.fillText('EARTH', 128, 66);
+  const w = g.measureText('EARTH ').width;
+  g.fillStyle = '#1a9b57'; g.fillText('LJY', 128 + w, 66);
+  g.font = '25px ' + FONT; g.fillStyle = '#e67700'; g.fillText('안좌고 지영T', 132, 104);
+  return c.toDataURL('image/png');
+}
+const LOGO_SRC = 'data:image/png;base64,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';
+let LOGO = LOGO_SRC;
+
+/* ================= 상태 ================= */
+const MAXS = {m1:10, m2:20, m3:20, m4:20, quiz:15, w1:7.5, w2:7.5};
+const NAMES = {m1:'미션 1 · 유도 전류가 흐르는 조건', m2:'미션 2 · 자기장의 변화', m3:'미션 3 · 유도 전류의 방향', m4:'미션 4 · 유도 전류의 세기', quiz:'학습 점검 · 객관식', w1:'서술형 1 · 유도 전류의 방향', w2:'서술형 2 · 유도 전류의 세기'};
+function newMC(){ return {tries:0, done:false, wrongs:[]}; }
+function freshM(k){
+  if(k===1) return {moved:false, still:false, q:newMC(), done:false};
+  if(k===2) return {obs:{}, sel:{}, errors:0, bad:{}, tableOK:false, q:newMC(), done:false};
+  if(k===3) return {obs:{}, sel:{}, errors:0, bad:{}, tableOK:false, pairSel:{}, pairErrors:0, pairBad:{}, pairOK:false, done:false};
+  if(k===4) return {runs:[], maxLed:0, concl:{}, conclErrors:0, conclBad:{}, conclOK:false, done:false};
+}
+const S = {
+  sid:'', name:'', unlocked:0, tab:0, resultSeen:false, winPlayed:false,
+  m1:freshM(1), m2:freshM(2), m3:freshM(3), m4:freshM(4),
+  quiz:{qs:[], done:false},
+  wr:{w1:{text:'', subs:0, ratio:0, miss:[]}, w2:{text:'', subs:0, ratio:0, miss:[]}},
+  best:{m1:null, m2:null, m3:null, m4:null, quiz:null, w1:null, w2:null},
+  runNo:0, logs:[]
+};
+
+/* ================= 탭 ================= */
+const TABS = ['🏁 시작','🧲 미션 1','🔄 미션 2','🧭 미션 3','💡 미션 4','📝 학습 점검','🏆 미션 성공'];
+function isDone(i){
+  return [S.unlocked>0, S.m1.done, S.m2.done, S.m3.done, S.m4.done, quizComplete(), S.resultSeen][i];
+}
+function renderTabs(){
+  $('#tabs').innerHTML = TABS.map((t,i)=>`<button class="tab ${i===S.tab?'on':''} ${i>S.unlocked?'lock':''} ${isDone(i)&&i<6?'done':''}" data-i="${i}">${i>S.unlocked?'🔒 ':''}${t}</button>`).join('');
+  $$('#tabs .tab').forEach(b=>b.onclick=()=>goTab(+b.dataset.i));
+}
+function unlock(i){ if(S.unlocked < i){ S.unlocked = i; } renderTabs(); }
+function goTab(i){
+  if(i > S.unlocked){ SND.bad(); toast('🔒 앞 단계를 먼저 완료해야 열려요.'); return; }
+  SND.click();
+  stopMotion();
+  S.tab = i;
+  for(let k=0;k<=6;k++) $('#sec'+k).classList.toggle('hidden', k!==i);
+  $('#lab').classList.toggle('hidden', !(i>=1 && i<=4));
+  if(i>=1 && i<=4) applyMissionControls(i);
+  renderTabs();
+  if(i===1) renderM1(); if(i===2) renderM2(); if(i===3) renderM3(); if(i===4) renderM4();
+  if(i===5) renderQuiz();
+  if(i===6){ S.resultSeen = true; renderResult(); renderTabs(); if(!S.winPlayed){ SND.win(); S.winPlayed=true; } }
+  $('#floatBack').classList.toggle('hidden', !(S.resultSeen && i!==6));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= 실험 무대 (물리 모형) ================= */
+const cv = $('#cv'), ctx = cv.getContext('2d');
+const W = 960, H = 440;
+function setupCanvas(){ const dpr = Math.min(window.devicePixelRatio||1, 2); cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+const L = {magLen:220, magH:56, axisY:150, coilW:180, coilH:130, minGap:15, galX:470, galY:368, ledX:660, ledY:360};
+const SPEEDS=[100,220,400], SPEED_N=['느림','보통','빠름'];
+const TURNS=[100,200,300], TURN_N=['적음','보통','많음'], TURN_DRAW=[6,10,14];
+const MAGS=[1,2,3], MAG_N=['약','중','강'];
+const HOME = {mag:210, coil:760};
+const P = {magX:HOME.mag, coilX:HOME.coil, mover:'magnet', pole:'N', speedLv:1, turnsLv:1, magLv:1,
+  vel:0, dragging:null, dragOff:0, dragTarget:0, flux:0, prevFlux:null, Iraw:0, I:0, needle:0, led:0, skip:true,
+  phase:0, wirePhase:0, stillFor:0, badge:0, badgeHold:0,
+  show:{field:true, particle:true, induced:true}};
+const DFMAX = 1.5*Math.pow(1.25,-2.5)/90;      // 거리 변화에 따른 자기장 변화율 최댓값
+const IREF = 3*DFMAX*SPEEDS[2];                 // 최대 조건에서 자기장 변화율 → 100%
+const THR = 0.6;                                // 전류가 흐른다고 판단하는 최소값(%)
+const magRight = ()=>P.magX + L.magLen/2;
+const coilLeft = ()=>P.coilX - L.coilW/2;
+const coilRight = ()=>P.coilX + L.coilW/2;
+const gapNow = ()=>coilLeft() - magRight();
+const fOf = g => { const u = g/90; return Math.pow(1+u*u, -1.5); };
+function setPos(obj, x){
+  if(obj==='magnet'){ P.magX = clamp(x, L.magLen/2 + 20, coilLeft() - L.minGap - L.magLen/2); }
+  else { P.coilX = clamp(x, magRight() + L.minGap + L.coilW/2, W - 20 - L.coilW/2); }
+}
+const R = {active:false};
+function stopMotion(){ P.vel = 0; P.dragging = null; if(R.active) endRun(); P.skip = true; }
+
+function step(dt){
+  const g0 = gapNow();
+  if(P.dragging){
+    const cur = P.dragging==='magnet' ? P.magX : P.coilX;
+    const maxStep = SPEEDS[2]*dt;
+    setPos(P.dragging, cur + clamp(P.dragTarget - cur, -maxStep, maxStep));
+  } else if(P.vel !== 0){
+    const v = SPEEDS[P.speedLv]*dt;
+    if(P.mover==='magnet') setPos('magnet', P.magX - P.vel*v);
+    else setPos('coil', P.coilX + P.vel*v);
+    if(Math.abs(gapNow()-g0) < 1e-6) P.vel = 0;
+  }
+  const g1 = gapNow(), dGap = g1 - g0;
+  const s = P.pole==='N' ? 1 : -1;
+  const flux = s * MAGS[P.magLv] * fOf(g1);
+  let dfdt = 0;
+  if(P.skip || P.prevFlux===null){ P.skip = false; } else { dfdt = (flux - P.prevFlux)/dt; }
+  P.prevFlux = flux; P.flux = flux;
+  P.Iraw = clamp(TURNS[P.turnsLv]/300 * dfdt / IREF * 100, -100, 100);
+  P.I += (P.Iraw - P.I) * Math.min(1, dt*18);
+  if(Math.abs(P.I) < 0.05 && P.Iraw===0) P.I = 0;
+  const a = Math.abs(P.I);
+  const target = a < 0.15 ? 0 : Math.sign(P.I) * 70 * Math.pow(a/100, 0.7);
+  P.needle += (target - P.needle) * Math.min(1, dt*12);
+  P.led = a < 0.15 ? 0 : Math.pow(a/100, 0.7);
+  P.phase += dt * Math.sign(P.I) * (a > THR ? 0.4 + 2.6*a/100 : 0);
+  P.wirePhase -= dt * Math.sign(P.I) * (a > THR ? 0.05 + 0.35*a/100 : 0);
+
+  const moving = Math.abs(dGap) > 1e-6;
+  if(moving){
+    P.badge = dGap < 0 ? 1 : -1; P.badgeHold = 0.35; P.stillFor = 0;
+    if(!R.active){
+      Object.assign(R, {active:true, peak:0, peakSign:0, peakDir:0, mover:P.dragging||P.mover, pole:P.pole,
+        drag:!!P.dragging, sp:P.speedLv, tu:P.turnsLv, mg:P.magLv, startGap:g0, still:0});
+    }
+    R.still = 0;
+    if(Math.abs(P.Iraw) > R.peak){ R.peak = Math.abs(P.Iraw); R.peakSign = Math.sign(P.Iraw); R.peakDir = Math.sign(dGap); }
+    if(P.dragging) R.drag = true;
+  } else {
+    P.stillFor += dt;
+    P.badgeHold -= dt; if(P.badgeHold <= 0) P.badge = 0;
+    if(R.active){ R.still += dt; if(R.still > 0.25) endRun(); }
+  }
+  if(S.tab===1 && S.m1.moved && !S.m1.still && P.stillFor > 2 && Math.abs(P.I) < 0.1){
+    S.m1.still = true; SND.ok(); toast('✅ 멈춰 있을 때 바늘을 관찰했어요!'); renderM1();
+  }
+}
+
+function endRun(){
+  R.active = false;
+  if(R.peak < THR) return;
+  S.runNo++;
+  const dir = R.peakDir < 0 ? 'in' : 'out';
+  const e = {no:S.runNo, mover:R.mover, pole:R.pole, dir, flux: dir==='in'?'inc':'dec', needle: R.peakSign>0?'R':'L', cur: R.peakSign>0?'ccw':'cw',
+    peak: Math.round(R.peak), sp: R.drag ? null : R.sp, tu:R.tu, mg:R.mg, startGap:R.startGap};
+  addLog(e);
+  onRun(e);
+}
+function caseText(e){
+  const who = e.mover==='magnet' ? `자석의 ${e.pole}극을 코일${e.dir==='in'?'에 가까이':'에서 멀리'}` : `코일을 자석의 ${e.pole}극${e.dir==='in'?'에 가까이':'에서 멀리'}`;
+  return who;
+}
+function addLog(e){
+  const fx = e.flux==='inc' ? '<span class="c-green">자기장 증가 ▲</span>' : '<span class="c-orange">자기장 감소 ▼</span>';
+  const nd = S.tab===3
+    ? (e.cur==='cw' ? '<span class="c-orange">유도 전류 ↻ 시계 방향</span>' : '<span class="c-blue">유도 전류 ↺ 시계 반대 방향</span>') + ' <span class="c-sub">(자석 쪽에서 볼 때)</span>'
+    : (e.needle==='R' ? '<span class="c-red">바늘 오른쪽 →</span>' : '<span class="c-blue">← 바늘 왼쪽</span>');
+  const cond = `${e.sp===null?'끌어서 이동':'속력 '+SPEED_N[e.sp]} · 감은 수 ${TURNS[e.tu]}회 · 자석 ${MAG_N[e.mg]}`;
+  S.logs.unshift(`#${e.no} ${caseText(e)} 할 때 → ${fx}, ${nd}, 최대 밝기 <span class="c-pink">${e.peak}%</span> <span class="c-sub">(${cond})</span>`);
+  if(S.logs.length > 40) S.logs.pop();
+  $('#obsLog').innerHTML = S.logs.map(x=>`<div>${x}</div>`).join('');
+}
+
+/* ===== 그리기 ===== */
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function head(x,y,ang,col,size){
+  ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x,y);
+  ctx.lineTo(x - size*Math.cos(ang-0.45), y - size*Math.sin(ang-0.45));
+  ctx.lineTo(x - size*Math.cos(ang+0.45), y - size*Math.sin(ang+0.45)); ctx.closePath(); ctx.fill();
+}
+function arrow(x1,y1,x2,y2,col,w,hs){
+  const a = Math.atan2(y2-y1, x2-x1);
+  ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2 - Math.cos(a)*hs*0.7, y2 - Math.sin(a)*hs*0.7); ctx.stroke();
+  head(x2,y2,a,col,hs);
+}
+function bez(p0,p1,p2,p3,t){ const u=1-t; return {x:u*u*u*p0.x+3*u*u*t*p1.x+3*u*t*t*p2.x+t*t*t*p3.x, y:u*u*u*p0.y+3*u*u*t*p1.y+3*u*t*t*p2.y+t*t*t*p3.y}; }
+function txt(s,x,y,col,size,align){ ctx.fillStyle = col; ctx.font = (size||14)+'px '+FONT; ctx.textAlign = align||'center'; ctx.textBaseline='middle'; ctx.fillText(s,x,y); }
+
+function drawFieldLines(){
+  const xL = P.magX - L.magLen/2, xR = magRight(), y0 = L.axisY;
+  const al = 0.22 + 0.13*P.magLv;
+  const col = `rgba(47,111,236,${al})`;
+  const nRight = P.pole==='N';
+  ctx.lineWidth = 1.6;
+  for(let k=1;k<=3;k++) for(const sg of [-1,1]){
+    const p0={x:xR-4,y:y0+sg*7*k}, p1={x:xR+38*k,y:y0+sg*(30+26*k)}, p2={x:xL-38*k,y:y0+sg*(30+26*k)}, p3={x:xL+4,y:y0+sg*7*k};
+    ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.bezierCurveTo(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y); ctx.stroke();
+    const a = bez(p0,p1,p2,p3,0.5), b = bez(p0,p1,p2,p3,0.53);
+    let ang = Math.atan2(b.y-a.y, b.x-a.x); if(!nRight) ang += Math.PI;
+    head(a.x, a.y, ang, `rgba(47,111,236,${al+0.2})`, 9);
+  }
+  // 코일 쪽으로 뻗는 자기장
+  const s = P.pole==='N' ? 1 : -1;
+  for(const dy of [-16,16]){
+    for(let x = xR + 14; x < coilLeft() - 6; x += 38){
+      const strength = MAGS[P.magLv]/3 * fOf(x - xR);
+      const al2 = clamp(strength*1.25, 0.06, 0.9);
+      const len = 20;
+      const x1 = s>0 ? x : x+len, x2 = s>0 ? x+len : x;
+      arrow(x1, y0+dy, x2, y0+dy, `rgba(47,111,236,${al2})`, 2.2, 8);
+    }
+  }
+}
+function coilTurnsX(){ const n = TURN_DRAW[P.turnsLv]; const xs=[]; for(let i=0;i<n;i++) xs.push(coilLeft() + (i+0.5)*L.coilW/n); return xs; }
+function drawCoil(part){
+  const xs = coilTurnsX(), y0 = L.axisY, rx = 11, ry = L.coilH/2;
+  if(part==='back'){
+    ctx.fillStyle = 'rgba(190,214,255,0.22)'; rr(coilLeft(), y0-ry+4, L.coilW, L.coilH-8, 16); ctx.fill();
+    ctx.strokeStyle = 'rgba(160,100,50,0.45)'; ctx.lineWidth = 3;
+    xs.forEach(x=>{ ctx.beginPath(); ctx.ellipse(x, y0, rx, ry, 0, Math.PI/2, Math.PI*3/2); ctx.stroke(); });
+  } else {
+    ctx.strokeStyle = '#d27a2e'; ctx.lineWidth = 4;
+    xs.forEach(x=>{ ctx.beginPath(); ctx.ellipse(x, y0, rx, ry, 0, -Math.PI/2, Math.PI/2); ctx.stroke(); });
+    const a = Math.abs(P.I);
+    if(P.show.particle && a > THR){
+      const up = P.I > 0;
+      xs.forEach((x,i)=>{
+        for(let j=0;j<2;j++){
+          let fr = ((P.phase + j/2 + i*0.13) % 1 + 1) % 1;
+          const th = Math.PI/2 - fr*Math.PI;
+          const px = x + rx*Math.cos(th), py = y0 + ry*Math.sin(th);
+          ctx.fillStyle = '#ffd43b'; ctx.shadowColor = '#ffb703'; ctx.shadowBlur = 8;
+          ctx.beginPath(); ctx.arc(px, py, 3.6, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+        }
+        head(x + rx + 1, y0 + (up ? -4 : 4), up ? -Math.PI/2 : Math.PI/2, '#f08c00', 8);
+      });
+    }
+  }
+}
+function drawMagnet(){
+  const x = P.magX - L.magLen/2, y = L.axisY - L.magH/2, w = L.magLen, h = L.magH;
+  const nRight = P.pole==='N';
+  const red = '#ef5350', blue = '#3f7be8';
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.15)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+  rr(x, y, w, h, 10); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore();
+  ctx.save(); rr(x, y, w, h, 10); ctx.clip();
+  ctx.fillStyle = nRight ? blue : red; ctx.fillRect(x, y, w/2, h);
+  ctx.fillStyle = nRight ? red : blue; ctx.fillRect(x+w/2, y, w/2, h);
+  ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(x, y, w, h*0.32);
+  ctx.restore();
+  txt(nRight?'S':'N', x+w*0.25, L.axisY+1, '#fff', 30);
+  txt(nRight?'N':'S', x+w*0.75, L.axisY+1, '#fff', 30);
+  const dots = '●'.repeat(P.magLv+1) + '○'.repeat(2-P.magLv);
+  txt(S.tab===4 ? `막대자석 · 세기 ${MAG_N[P.magLv]} ${dots}` : '막대자석', P.magX, L.axisY + h/2 + 18, '#5b6474', 14);
+}
+function drawCoilFieldArrows(){
+  const fm = MAGS[P.magLv]*fOf(gapNow())/3;
+  const s = P.pole==='N' ? 1 : -1;
+  const len = 24 + 120*fm;
+  for(const dy of [-40, 40]){
+    const x1 = P.coilX - s*len/2, x2 = P.coilX + s*len/2;
+    arrow(x1, L.axisY+dy, x2, L.axisY+dy, 'rgba(47,111,236,0.9)', 3 + 4*fm, 11 + 5*fm);
+  }
+}
+function drawInduced(){
+  const a = Math.abs(P.I); if(a <= THR) return;
+  const k = Math.pow(a/100, 0.7);
+  const len = 36 + 130*k;
+  const dir = P.I > 0 ? -1 : 1;  // 양(+): 유도 자기장이 자석 쪽(왼쪽)
+  arrow(P.coilX - dir*len/2, L.axisY, P.coilX + dir*len/2, L.axisY, 'rgba(240,140,0,0.95)', 6 + 6*k, 18 + 6*k);
+  // 코일 양 끝의 극
+  const leftPole = P.I > 0 ? 'N' : 'S', rightPole = leftPole==='N' ? 'S' : 'N';
+  const al = 0.45 + 0.55*k;
+  [[coilLeft()+6, leftPole],[coilRight()-6, rightPole]].forEach(([x,p])=>{
+    ctx.globalAlpha = al;
+    ctx.fillStyle = p==='N' ? '#ef5350' : '#3f7be8';
+    ctx.beginPath(); ctx.arc(x, L.axisY - 84, 13, 0, Math.PI*2); ctx.fill();
+    txt(p, x, L.axisY - 83, '#fff', 16);
+    ctx.globalAlpha = 1;
+  });
+  // 인력·척력
+  const repel = (leftPole === P.pole);
+  const col = '#8b5cf6';
+  const yM = L.axisY - L.magH/2 - 18;
+  if(repel){ arrow(magRight()-30, yM, magRight()-90, yM, col, 4, 12); }
+  else { arrow(magRight()-90, yM, magRight()-30, yM, col, 4, 12); }
+  const yC = L.axisY - 112;
+  if(repel){ arrow(coilLeft()+20, yC, coilLeft()+75, yC, col, 4, 12); }
+  else { arrow(coilLeft()+75, yC, coilLeft()+20, yC, col, 4, 12); }
+  const midX = (magRight() + coilLeft())/2;
+  txt(repel ? '척력 (서로 밀어냄)' : '인력 (서로 끌어당김)', clamp(midX, 120, 840), L.axisY - 112, col, 15);
+}
+function wirePaths(){
+  const xs = coilTurnsX(), x0 = xs[0], xn = xs[xs.length-1], yb = L.axisY + L.coilH/2;
+  const gL = {x:L.galX-62, y:L.galY+30}, gR = {x:L.galX+62, y:L.galY+30};
+  const eL = {x:L.ledX-9, y:L.ledY+34}, eR = {x:L.ledX+9, y:L.ledY+34};
+  return [
+    [{x:x0,y:yb},{x:x0-30,y:yb+150},{x:gL.x-40,y:gL.y+40},gL],
+    [gR,{x:gR.x+30,y:gR.y+34},{x:eL.x-30,y:eL.y+34},eL],
+    [eR,{x:eR.x+60,y:eR.y+40},{x:xn+30,y:yb+150},{x:xn,y:yb}]
+  ];
+}
+function drawCircuit(){
+  const paths = wirePaths();
+  ctx.strokeStyle = '#6b7280'; ctx.lineWidth = 3;
+  paths.forEach(p=>{ ctx.beginPath(); ctx.moveTo(p[0].x,p[0].y); ctx.bezierCurveTo(p[1].x,p[1].y,p[2].x,p[2].y,p[3].x,p[3].y); ctx.stroke(); });
+  const a = Math.abs(P.I);
+  if(P.show.particle && a > THR){
+    const N = 24;
+    for(let i=0;i<N;i++){
+      let u = ((i/N + P.wirePhase) % 1 + 1) % 1;
+      const seg = Math.min(2, Math.floor(u*3)), t = u*3 - seg;
+      const p = paths[seg], pt = bez(p[0],p[1],p[2],p[3],t);
+      ctx.fillStyle = '#ffd43b'; ctx.shadowColor = '#ffb703'; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.6, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+    }
+  }
+}
+function drawGalv(){
+  const x = L.galX, y = L.galY;
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=8; ctx.shadowOffsetY=3;
+  rr(x-80, y-62, 160, 92, 16); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.restore();
+  rr(x-80, y-62, 160, 92, 16); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2; ctx.stroke();
+  const cx = x, cy = y + 20, r = 62;
+  ctx.lineWidth = 8; ctx.lineCap='butt';
+  ctx.strokeStyle = 'rgba(63,123,232,.18)'; ctx.beginPath(); ctx.arc(cx, cy, r-6, -Math.PI/2 - 1.22, -Math.PI/2); ctx.stroke();
+  ctx.strokeStyle = 'rgba(239,83,80,.18)'; ctx.beginPath(); ctx.arc(cx, cy, r-6, -Math.PI/2, -Math.PI/2 + 1.22); ctx.stroke();
+  ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+  for(let d=-70; d<=70; d+=10){
+    const rad = d*Math.PI/180, r1 = d===0 ? r-18 : r-13;
+    ctx.beginPath(); ctx.moveTo(cx + r1*Math.sin(rad), cy - r1*Math.cos(rad)); ctx.lineTo(cx + (r-4)*Math.sin(rad), cy - (r-4)*Math.cos(rad)); ctx.stroke();
+  }
+  txt('왼쪽', x-56, y-46, '#3f7be8', 12); txt('오른쪽', x+54, y-46, '#ef5350', 12); txt('0', x, y-50, '#64748b', 12);
+  const rad = P.needle*Math.PI/180;
+  ctx.strokeStyle = '#e03131'; ctx.lineWidth = 3; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + (r-10)*Math.sin(rad), cy - (r-10)*Math.cos(rad)); ctx.stroke();
+  ctx.fillStyle = '#334155'; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI*2); ctx.fill();
+  txt('검류계 G', x, y+40, '#475569', 13);
+  ctx.fillStyle = '#334155'; [x-62, x+62].forEach(tx=>{ ctx.beginPath(); ctx.arc(tx, y+30, 5, 0, Math.PI*2); ctx.fill(); });
+}
+function drawLED(){
+  const x = L.ledX, y = L.ledY, b = P.led;
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x-9, y+8); ctx.lineTo(x-9, y+34); ctx.moveTo(x+9, y+8); ctx.lineTo(x+9, y+34); ctx.stroke();
+  if(b > 0.02){
+    const grd = ctx.createRadialGradient(x, y-6, 4, x, y-6, 30 + 60*b);
+    grd.addColorStop(0, `rgba(255,90,90,${0.55*b+0.1})`); grd.addColorStop(1, 'rgba(255,90,90,0)');
+    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(x, y-6, 30+60*b, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle = `rgba(255,${Math.round(150-90*b)},${Math.round(150-90*b)},${0.35 + 0.65*b})`;
+  ctx.beginPath(); ctx.arc(x, y-8, 17, Math.PI, 0); ctx.lineTo(x+17, y+8); ctx.lineTo(x-17, y+8); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#e57373'; ctx.lineWidth = 2; ctx.stroke();
+  txt(`LED ${Math.round(b*100)}%`, x+58, y-4, '#d6336c', 14);
+  txt('(양방향)', x+58, y+14, '#94a3b8', 11);
+}
+function drawBadge(){
+  let t, c;
+  if(P.badge > 0){ t = '코일을 통과하는 자기장  ▲ 세기 증가'; c = '#1a9b57'; }
+  else if(P.badge < 0){ t = '코일을 통과하는 자기장  ▼ 세기 감소'; c = '#e67700'; }
+  else { t = '코일을 통과하는 자기장  ─ 변화 없음'; c = '#94a3b8'; }
+  const bx = clamp(P.coilX, 190, 770);
+  ctx.font = '15px ' + FONT; const w = ctx.measureText(t).width + 26;
+  rr(bx - w/2, 8, w, 28, 14); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.stroke();
+  txt(t, bx, 22, c, 15);
+}
+function drawLegend(){
+  if(!P.show.field && !P.show.induced) return;
+  let y = 18;
+  ctx.font = '12px ' + FONT;
+  if(P.show.field){ arrow(14, y, 40, y, '#2f6fec', 3, 8); txt('자석의 자기장', 46, y, '#2f6fec', 12, 'left'); y += 18; }
+  if(P.show.induced){ arrow(14, y, 40, y, '#f08c00', 4, 9); txt('유도 자기장', 46, y, '#e67700', 12, 'left'); y += 18; }
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#fbfdff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = 'rgba(47,111,236,.05)'; ctx.lineWidth = 1;
+  for(let x=0;x<W;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0;y<H;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  ctx.fillStyle = '#dfe7f5'; rr(24, L.axisY + 82, W-48, 9, 5); ctx.fill();
+  if(P.show.field) drawFieldLines();
+  drawCoil('back');
+  drawCircuit();
+  drawMagnet();
+  if(P.show.field) drawCoilFieldArrows();
+  if(P.show.induced) drawInduced();
+  drawCoil('front');
+  txt(S.tab===4 ? `코일 · 감은 수 ${TURNS[P.turnsLv]}회` : '코일', P.coilX, L.axisY + L.coilH/2 + 16, '#8a5a2b', 14);
+  drawGalv(); drawLED();
+  if(S.tab===3) drawViewInset();
+  drawBadge(); drawLegend();
+}
+/* 자석 쪽에서 본 코일 (미션 3) — 유도 전류 방향: I>0 → 시계 반대 방향 */
+function drawViewInset(){
+  const cx = 150, cy = 345, r = 50;
+  rr(cx-118, cy-88, 236, 172, 16); ctx.fillStyle = 'rgba(255,255,255,0.96)'; ctx.fill();
+  ctx.strokeStyle = '#0b9a99'; ctx.lineWidth = 2; ctx.stroke();
+  txt('👁️ 자석 쪽에서 본 코일', cx, cy-70, '#0b9a99', 15);
+  ctx.strokeStyle = '#d27a2e'; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  ctx.strokeStyle = 'rgba(210,122,46,.35)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r-9, 0, Math.PI*2); ctx.stroke();
+  const a = Math.abs(P.I);
+  let label = '흐르지 않음', col = '#94a3b8';
+  if(a > THR){
+    const ccw = P.I > 0;
+    label = ccw ? '↺ 시계 반대 방향' : '↻ 시계 방향';
+    col = ccw ? '#2f6fec' : '#e67700';
+    const base = -P.phase * 2 * Math.PI * 0.5;   // 화면에서 각도 감소 = 시계 반대
+    for(let i=0;i<8;i++){
+      const th = base + i*Math.PI/4;
+      ctx.fillStyle = '#ffd43b'; ctx.shadowColor = '#ffb703'; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(cx + r*Math.cos(th), cy + r*Math.sin(th), 4.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+    }
+    for(let i=0;i<4;i++){
+      const th = i*Math.PI/2 + Math.PI/4;
+      const hx = cx + (r+14)*Math.cos(th), hy = cy + (r+14)*Math.sin(th);
+      const tang = ccw ? th - Math.PI/2 : th + Math.PI/2;
+      head(hx + 8*Math.cos(tang), hy + 8*Math.sin(tang), tang, col, 16);
+    }
+  }
+  txt(label, cx, cy+70, col, 15);
+}
+let lastT = performance.now(), statTimer = 0;
+function loop(now){
+  const dt = Math.min(0.05, (now - lastT)/1000); lastT = now;
+  if(dt > 0) step(dt);
+  if(!$('#lab').classList.contains('hidden')){
+    draw();
+    statTimer += dt;
+    if(statTimer > 0.08){ statTimer = 0; updateStatus(); }
+  }
+  requestAnimationFrame(loop);
+}
+function updateStatus(){
+  const a = Math.abs(P.I);
+  $('#stFlux').innerHTML = P.badge>0 ? '<span class="c-green">▲ 세기 증가</span>' : P.badge<0 ? '<span class="c-orange">▼ 세기 감소</span>' : '<span class="c-sub">변화 없음</span>';
+  $('#stCur').innerHTML = a > THR ? `<span class="c-pink">흐름 (세기 ${Math.round(a)}%)</span>` : '<span class="c-sub">흐르지 않음</span>';
+  $('#stNeedleL').textContent = S.tab===3 ? '유도 전류 방향 (자석 쪽에서 볼 때)' : '검류계 바늘';
+  if(S.tab===3) $('#stNeedle').innerHTML = (a > THR) ? (P.I>0 ? '<span class="c-blue">↺ 시계 반대 방향</span>' : '<span class="c-orange">↻ 시계 방향</span>') : '<span class="c-sub">흐르지 않음</span>';
+  else $('#stNeedle').innerHTML = (a > THR) ? (P.I>0 ? '<span class="c-red">오른쪽 →</span>' : '<span class="c-blue">← 왼쪽</span>') : '<span class="c-sub">가운데 (0)</span>';
+  $('#stLed').innerHTML = `<span class="c-pink">${Math.round(P.led*100)}%</span>`;
+}
+
+/* ===== 미션별 조작 요소 ===== */
+const MCFG = {
+  1:{mover:true, pole:false, factors:false, induced:false, drag:['magnet','coil'],
+     guide:'이번 미션에서 조절하는 요소: <span class="c-blue">움직일 물체(자석·코일)</span>, <span class="c-orange">움직이기·정지</span>',
+     fix:'고정된 조건: N극, 속력 보통, 감은 수 200회, 자석 세기 중',
+     tip:'💡 버튼 대신 자석이나 코일을 손가락(마우스)으로 끌어서 움직여도 돼요. 움직이다가 멈추고 바늘을 지켜보세요.'},
+  2:{mover:true, pole:false, factors:false, induced:false, drag:['magnet','coil'],
+     guide:'이번 미션에서 조절하는 요소: <span class="c-blue">움직일 물체(자석·코일)</span>, <span class="c-orange">가까이·멀리</span>',
+     fix:'고정된 조건: 코일 쪽을 향한 극 N극, 속력 보통, 감은 수 200회, 자석 세기 중',
+     tip:'💡 자석이나 코일을 손가락(마우스)으로 끌어서 움직여도 돼요. 움직일 물체는 물체가 멈춘 상태에서 바뀌어요.'},
+  3:{mover:false, pole:true, factors:false, induced:true, drag:['magnet'],
+     guide:'이번 미션에서 조절하는 요소: <span class="c-red">코일 쪽을 향한 극(N극·S극)</span>, <span class="c-orange">가까이·멀리</span>',
+     fix:'고정된 조건: 움직이는 물체 자석, 속력 보통, 감은 수 200회, 자석 세기 중',
+     tip:'💡 자석을 손가락(마우스)으로 끌어서 움직여도 돼요. 극은 자석이 멈춘 상태에서 바뀌어요.'},
+  4:{mover:false, pole:false, factors:true, induced:false, drag:['magnet'],
+     guide:'이번 미션에서 조절하는 요소: <span class="c-blue">이동 속력</span>, <span class="c-orange">코일 감은 수</span>, <span class="c-red">자석 세기</span>',
+     fix:'고정된 조건: 움직이는 물체 자석, 코일 쪽을 향한 극 N극',
+     tip:'💡 세 요소 중 <span class="c-purple">한 가지만 바꾸고</span> ↺ 처음 위치로 → ⇢⇠ 가까이 순서로 실험하세요. 감은 수·세기는 자석이 멈춘 상태에서 바뀌어요.'}
+};
+function applyMissionControls(i){
+  const c = MCFG[i]; if(!c) return;
+  stopMotion();
+  P.mover = 'magnet'; setSeg('#segMover','magnet');
+  P.pole = 'N'; setSeg('#segPole','N');
+  P.speedLv = 1; setSeg('#segSpeed', 1);
+  P.turnsLv = 1; setSeg('#segTurns', 1);
+  P.magLv = 1; setSeg('#segMag', 1);
+  P.magX = HOME.mag; P.coilX = HOME.coil; P.skip = true;
+  $('#cgMover').classList.toggle('hidden', !c.mover);
+  $('#cgPole').classList.toggle('hidden', !c.pole);
+  $('#rowFactors').classList.toggle('hidden', !c.factors);
+  $('#tgInducedL').classList.toggle('hidden', !c.induced);
+  P.show.induced = c.induced && $('#tgInduced').checked;
+  $('#ctlGuide').innerHTML = `🎛️ ${c.guide}<br><span class="fix">🔒 ${c.fix}</span>`;
+  $('#ctlTip').innerHTML = c.tip;
+}
+
+/* ===== 조작 ===== */
+function bindSeg(id, cb){ const seg = $(id); seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{ SND.click(); cb(b.dataset.v); setSeg(id, b.dataset.v); }); }
+function setSeg(id, v){ $(id).querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.v===String(v))); }
+bindSeg('#segMover', v=>{ stopMotion(); P.mover = v; });
+bindSeg('#segPole', v=>{ stopMotion(); P.pole = v; });
+bindSeg('#segSpeed', v=>{ P.speedLv = +v; });
+bindSeg('#segTurns', v=>{ stopMotion(); P.turnsLv = +v; });
+bindSeg('#segMag', v=>{ stopMotion(); P.magLv = +v; });
+$('#btnIn').onclick = ()=>{ SND.click(); if(R.active && P.vel!==-1) endRun(); P.dragging=null; P.vel = -1; };
+$('#btnOut').onclick = ()=>{ SND.click(); if(R.active && P.vel!==1) endRun(); P.dragging=null; P.vel = 1; };
+$('#btnStop').onclick = ()=>{ SND.click(); P.vel = 0; P.dragging = null; };
+$('#btnHome').onclick = ()=>{ SND.click(); stopMotion(); P.magX = HOME.mag; P.coilX = HOME.coil; P.skip = true; };
+$('#tgField').onchange = e=>P.show.field = e.target.checked;
+$('#tgParticle').onchange = e=>P.show.particle = e.target.checked;
+$('#tgInduced').onchange = e=>P.show.induced = e.target.checked && !!(MCFG[S.tab] && MCFG[S.tab].induced);
+function toLocal(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX - r.left)*W/r.width, y:(e.clientY - r.top)*H/r.height}; }
+cv.addEventListener('pointerdown', e=>{
+  const p = toLocal(e);
+  let obj = null;
+  if(Math.abs(p.x - P.magX) < L.magLen/2 + 6 && Math.abs(p.y - L.axisY) < L.magH/2 + 14) obj = 'magnet';
+  else if(p.x > coilLeft() - 8 && p.x < coilRight() + 8 && Math.abs(p.y - L.axisY) < L.coilH/2 + 10) obj = 'coil';
+  if(!obj) return;
+  const cfg = MCFG[S.tab];
+  if(cfg && !cfg.drag.includes(obj)){ toast('이번 미션에서는 <span style="color:#ffb4b4">자석</span>만 움직여요.'); return; }
+  e.preventDefault();
+  if(R.active) endRun();
+  P.vel = 0; P.dragging = obj; P.mover = obj; setSeg('#segMover', obj);
+  P.dragOff = p.x - (obj==='magnet' ? P.magX : P.coilX); P.dragTarget = p.x - P.dragOff;
+  try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+});
+cv.addEventListener('pointermove', e=>{ if(!P.dragging) return; const p = toLocal(e); P.dragTarget = p.x - P.dragOff; });
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>cv.addEventListener(ev, ()=>{ P.dragging = null; }));
+
+/* ================= 미션 이벤트 ================= */
+const M2ROWS = [
+  {k:'magnet-N-in',  label:'① 자석의 N극을 코일에 <span class="c-blue">가까이</span> 할 때', how:'움직일 물체: 자석 → 가까이'},
+  {k:'magnet-N-out', label:'② 자석의 N극을 코일에서 <span class="c-orange">멀리</span> 할 때', how:'움직일 물체: 자석 → 멀리'},
+  {k:'coil-N-in',    label:'③ 코일을 자석의 N극에 <span class="c-blue">가까이</span> 할 때', how:'움직일 물체: 코일 → 가까이'},
+  {k:'coil-N-out',   label:'④ 코일을 자석의 N극에서 <span class="c-orange">멀리</span> 할 때', how:'움직일 물체: 코일 → 멀리'}
+];
+const M3ROWS = [
+  {k:'N-in',  label:'① <span class="c-red">N극</span>을 코일에 <span class="c-blue">가까이</span> 할 때', fx:'N극 방향 자기장 <span class="c-green">증가</span>'},
+  {k:'N-out', label:'② <span class="c-red">N극</span>을 코일에서 <span class="c-orange">멀리</span> 할 때', fx:'N극 방향 자기장 <span class="c-orange">감소</span>'},
+  {k:'S-in',  label:'③ <span class="c-blue">S극</span>을 코일에 <span class="c-blue">가까이</span> 할 때', fx:'S극 방향 자기장 <span class="c-green">증가</span>'},
+  {k:'S-out', label:'④ <span class="c-blue">S극</span>을 코일에서 <span class="c-orange">멀리</span> 할 때', fx:'S극 방향 자기장 <span class="c-orange">감소</span>'}
+];
+const M3PAIRS = [
+  {k:'p1', a:'N-in', b:'N-out', label:'① N극 가까이 ↔ ② N극 멀리', ans:'opp'},
+  {k:'p2', a:'N-in', b:'S-in',  label:'① N극 가까이 ↔ ③ S극 가까이', ans:'opp'},
+  {k:'p3', a:'S-in', b:'S-out', label:'③ S극 가까이 ↔ ④ S극 멀리', ans:'opp'},
+  {k:'p4', a:'N-in', b:'S-out', label:'① N극 가까이 ↔ ④ S극 멀리', ans:'same'}
+];
+function onRun(e){
+  if(S.tab===1 && !S.m1.done && !S.m1.moved){ S.m1.moved = true; SND.ok(); toast('⚡ 전류가 흘렀어요! 이제 모두 멈추고 2초 동안 바늘을 지켜보세요.'); renderM1(); }
+  if(S.tab===2 && !S.m2.done){
+    if(e.pole !== 'N'){ toast('미션 2는 <span style="color:#ffb4b4">N극</span>을 코일 쪽으로 향하게 하고 실험해요.'); return; }
+    const k = `${e.mover}-N-${e.dir}`;
+    const first = !S.m2.obs[k];
+    S.m2.obs[k] = {flux:e.flux, needle:e.needle};
+    if(first){ SND.ok(); const row = M2ROWS.find(r=>r.k===k); toast('📋 기록할 수 있어요: ' + row.label.replace(/<[^>]+>/g,'')); }
+    renderM2();
+  }
+  if(S.tab===3 && !S.m3.done){
+    const k = `${e.pole}-${e.dir}`;
+    const first = !S.m3.obs[k];
+    S.m3.obs[k] = {cur:e.cur};
+    if(first){ SND.ok(); const row = M3ROWS.find(r=>r.k===k); toast('📋 기록할 수 있어요: ' + row.label.replace(/<[^>]+>/g,'')); }
+    renderM3();
+  }
+  if(S.tab===4 && !S.m4.done){
+    if(e.sp!==null && e.startGap < 60) toast('출발 거리가 가까워서 밝기가 덜 나왔을 수 있어요. ↺ 처음 위치로 누르고 다시 해 보세요.', 3200);
+    S.m4.runs.push(e);
+    S.m4.maxLed = Math.max(S.m4.maxLed, e.peak);
+    if(e.peak >= 90) { SND.win(); toast('🌟 LED 밝기 ' + e.peak + '%! 발전소 최대 가동 성공!'); }
+    renderM4();
+  }
+}
+
+/* ===== 객관식 위젯 ===== */
+const CIRC = ['①','②','③','④','⑤'];
+function mcHTML(id, q){ return `<div class="mc" id="${id}"><p class="q">${q.q}</p>${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${CIRC[i]} ${o}</button>`).join('')}<div class="mcfb"></div></div>`; }
+function bindMC(id, q, st, onCorrect){
+  const box = document.getElementById(id);
+  box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(st.done) return; const i = +b.dataset.i; if(st.wrongs.includes(i)) return;
+    st.tries++;
+    if(i===q.ans){ st.done = true; SND.ok(); paintMC(box,q,st); onCorrect && onCorrect(); }
+    else { st.wrongs.push(i); SND.bad(); paintMC(box,q,st); }
+  });
+  paintMC(box,q,st);
+}
+function paintMC(box, q, st){
+  box.querySelectorAll('.opt').forEach(b=>{ const i = +b.dataset.i; b.classList.toggle('wrong', st.wrongs.includes(i)); b.classList.toggle('right', st.done && i===q.ans); b.disabled = st.done || st.wrongs.includes(i); });
+  const fb = box.querySelector('.mcfb');
+  if(st.done) fb.innerHTML = `<div class="fb good">⭕ 정답이에요! ${q.ex}</div>`;
+  else if(st.wrongs.length){ const w = st.wrongs[st.wrongs.length-1]; fb.innerHTML = `<div class="fb bad">❌ 다시 생각해 볼까요? ${q.fb[w] || ''}</div>`; }
+  else fb.innerHTML = '';
+}
+const qPts = t => t===1 ? 4 : t===2 ? 2 : 0;
+
+/* ================= 미션 1 ================= */
+const M1Q = {
+  q:'자석과 코일이 모두 <span class="c-red">멈춰 있을 때</span> 유도 전류가 흐르지 않는 까닭으로 옳은 것은?',
+  opts:['자석이 멈추면 자석의 자기장이 사라지기 때문이다.','코일을 통과하는 자기장의 세기가 변하지 않기 때문이다.','멈춰 있으면 코일의 감은 수가 줄어들기 때문이다.','자석이 코일에서 너무 멀리 있기 때문이다.'],
+  ans:1,
+  fb:{0:'자석이 멈춰도 자기장은 그대로 있어요. 화면의 <span class="c-blue">파란 화살표</span>가 사라졌나요? 무엇이 <span class="c-orange">변하지 않았는지</span> 생각해 보세요.',
+      2:'코일의 감은 수는 움직임과 상관없이 그대로예요. 상태 표시창의 <span class="c-blue">코일을 통과하는 자기장</span> 칸을 다시 보세요.',
+      3:'코일 바로 옆에 자석을 두고 멈춰도 바늘은 0이에요. 거리보다 <span class="c-orange">변화</span>가 중요해요.'},
+  ex:'코일을 통과하는 <span class="c-blue">자기장이 변할 때만</span> 유도 전류가 흘러요. 멈춰 있으면 자기장이 아무리 세도 변화가 없으므로 전류가 흐르지 않아요.'
+};
+function renderM1(){
+  const m = S.m1;
+  $('#m1List').innerHTML = `<li class="${m.moved?'ok':''}">자석이나 코일을 움직여 검류계 바늘이 움직이게 하기 (유도 전류 만들기)</li>
+    <li class="${m.still?'ok':''}">자석과 코일을 모두 <span class="c-red">멈춘 채로 2초 동안</span> 검류계 바늘 관찰하기</li>
+    <li class="${m.q.done?'ok':''}">생각 정리 문제 해결하기</li>`;
+  const q = $('#m1Q');
+  if(m.moved && m.still){
+    if(!q.dataset.on){ q.innerHTML = '<h3>🤔 생각 정리</h3>' + mcHTML('m1mc', M1Q); q.dataset.on = '1'; bindMC('m1mc', M1Q, m.q, ()=>completeM1()); }
+  } else { q.innerHTML = ''; delete q.dataset.on; }
+  $('#m1Concept').innerHTML = m.done ? `<div class="concept"><span class="ttl">📘 개념 정리 · 전자기 유도</span><br>자석과 코일 사이에 <span class="c-purple">상대적인 운동</span>이 있어 코일을 통과하는 <span class="c-blue">자기장이 변하면</span> 코일에 전류가 흘러요. 이 현상을 <span class="c-orange">전자기 유도</span>, 이때 흐르는 전류를 <span class="c-orange">유도 전류</span>라고 해요.</div>` : '';
+  $('#m1Next').disabled = !m.done;
+}
+function completeM1(){
+  const m = S.m1; m.done = true;
+  const sc = 6 + qPts(m.q.tries);
+  const txt = m.q.tries===1
+    ? '미션 1에서는 자석을 움직일 때만 검류계 바늘이 움직이고 멈추면 0으로 돌아오는 것을 직접 확인한 뒤, 전류가 흐르지 않는 까닭이 \'코일을 통과하는 자기장의 변화가 없기 때문\'임을 한 번에 찾아냈어요.'
+    : `미션 1에서는 움직일 때와 멈출 때의 검류계 바늘을 비교했고, 생각 정리 문제를 ${m.q.tries}번 만에 해결하며 \'자기장의 크기\'가 아니라 \'자기장의 변화\'가 있어야 유도 전류가 흐른다는 점을 정리했어요.`;
+  setBest('m1', sc, {text:txt, tries:m.q.tries});
+  unlock(2); renderM1(); toast('🎉 미션 1 성공! 미션 2가 열렸어요.');
+}
+$('#m1Reset').onclick = ()=>{ SND.click(); S.m1 = freshM(1); delete $('#m1Q').dataset.on; renderM1(); renderTabs(); toast('미션 1을 처음부터 다시 해요.'); };
+$('#m1Next').onclick = ()=>goTab(2);
+
+/* ================= 미션 2 ================= */
+const M2Q = {
+  q:'표의 결과를 비교해 보세요. 자석을 움직일 때와 코일을 움직일 때에 대한 설명으로 옳은 것은?',
+  opts:['자석을 움직일 때만 유도 전류가 흐른다.','코일을 움직일 때만 유도 전류가 흐른다.','자석과 코일이 가까워지는(멀어지는) 상대 운동이 같으면 자기장의 변화와 유도 전류의 방향이 같다.','무엇을 움직이느냐에 따라 유도 전류의 방향이 항상 반대가 된다.'],
+  ans:2,
+  fb:{0:'표의 ③, ④를 보세요. 코일을 움직여도 바늘이 움직였어요.',1:'표의 ①, ②를 보세요. 자석을 움직여도 바늘이 움직였어요.',3:'①과 ③(둘 다 가까워짐), ②와 ④(둘 다 멀어짐)의 바늘 방향을 비교해 보세요. 같은 방향이었나요, 반대였나요?'},
+  ex:'무엇을 움직이든 <span class="c-purple">가까워지면</span> 코일을 통과하는 자기장이 <span class="c-green">증가</span>하고, <span class="c-purple">멀어지면</span> <span class="c-orange">감소</span>해요. 상대 운동이 같으면 결과도 같아요.'
+};
+function pickHTML(group, key, val, opts, disabled){
+  return `<span class="pick">${opts.map(([v,t])=>`<button data-g="${group}" data-k="${key}" data-v="${v}" class="${val===v?'on':''}" ${disabled?'disabled':''}>${t}</button>`).join('')}</span>`;
+}
+function renderM2(){
+  const m = S.m2;
+  let h = '<tr><th>실험 상황</th><th>실험</th><th>코일을 통과하는 자기장</th><th>검류계 바늘</th></tr>';
+  M2ROWS.forEach(r=>{
+    const ob = m.obs[r.k], sel = m.sel[r.k] || {};
+    const cls = m.bad[r.k]===true ? 'row-bad' : m.bad[r.k]===false ? 'row-good' : '';
+    const dis = !ob || m.tableOK;
+    h += `<tr class="${cls}"><td class="case">${r.label}<br><span class="c-sub" style="font-size:13px">${r.how}</span></td>
+      <td>${ob?'✅':'⏳'}</td>
+      <td>${pickHTML('m2f', r.k, sel.flux, [['inc','증가'],['dec','감소']], dis)}</td>
+      <td>${pickHTML('m2n', r.k, sel.needle, [['L','← 왼쪽'],['R','오른쪽 →']], dis)}</td></tr>`;
+  });
+  $('#m2Tbl').innerHTML = h;
+  $$('#m2Tbl .pick button').forEach(b=>b.onclick=()=>{
+    SND.click(); const k = b.dataset.k; m.sel[k] = m.sel[k] || {};
+    if(b.dataset.g==='m2f') m.sel[k].flux = b.dataset.v; else m.sel[k].needle = b.dataset.v;
+    delete m.bad[k]; renderM2();
+  });
+  $('#m2Check').disabled = m.tableOK;
+  const q = $('#m2Q');
+  if(m.tableOK){
+    if(!q.dataset.on){ q.innerHTML = '<h3>🤔 결과 비교하기</h3>' + mcHTML('m2mc', M2Q); q.dataset.on='1'; bindMC('m2mc', M2Q, m.q, ()=>completeM2()); }
+  } else { q.innerHTML = ''; delete q.dataset.on; }
+  $('#m2Concept').innerHTML = m.done ? `<div class="concept"><span class="ttl">📘 개념 정리 · 자기장의 변화</span><br>· 자석의 N극을 코일에 가까이 할 때 = 코일을 자석의 N극에 가까이 할 때 → 코일을 통과하는 자기장의 세기 <span class="c-green">증가</span><br>· 자석의 N극을 코일에서 멀리 할 때 = 코일을 자석의 N극에서 멀리 할 때 → 자기장의 세기 <span class="c-orange">감소</span><br>· 가까워질 때와 멀어질 때 유도 전류의 방향은 <span class="c-red">반대</span>예요.</div>` : '';
+  $('#m2Next').disabled = !m.done;
+}
+$('#m2Check').onclick = ()=>{
+  const m = S.m2;
+  const notRun = M2ROWS.filter(r=>!m.obs[r.k]);
+  if(notRun.length){ SND.bad(); $('#m2Fb').innerHTML = `<div class="fb info">아직 실험하지 않은 상황이 있어요: ${notRun.map(r=>r.label).join(', ')}</div>`; return; }
+  const empty = M2ROWS.filter(r=>!m.sel[r.k] || !m.sel[r.k].flux || !m.sel[r.k].needle);
+  if(empty.length){ SND.bad(); $('#m2Fb').innerHTML = `<div class="fb info">모든 칸을 골라 주세요.</div>`; return; }
+  let wrong = 0, msgs = [];
+  M2ROWS.forEach(r=>{
+    const ob = m.obs[r.k], sel = m.sel[r.k]; let bad = false;
+    if(sel.flux !== ob.flux){ wrong++; bad = true; msgs.push(`${r.label.replace(/<[^>]+>/g,'')}: 자석(N극)과 코일이 <span class="c-blue">가까워지면</span> 코일을 통과하는 자기장은 세지고(증가), <span class="c-orange">멀어지면</span> 약해져요(감소). 상태 표시창을 보며 다시 실험해 보세요.`); }
+    if(sel.needle !== ob.needle){ wrong++; bad = true; msgs.push(`${r.label.replace(/<[^>]+>/g,'')}: 실험할 때 검류계 바늘이 어느 쪽으로 기울었는지 다시 관찰해 보세요.`); }
+    m.bad[r.k] = bad;
+  });
+  if(wrong){ m.errors += wrong; SND.bad(); $('#m2Fb').innerHTML = `<div class="fb bad">❌ ${wrong}곳을 다시 확인해 보세요.<br>${msgs.join('<br>')}</div>`; renderM2(); return; }
+  m.tableOK = true; SND.ok(); $('#m2Fb').innerHTML = '<div class="fb good">⭕ 네 가지 경우를 모두 정확하게 기록했어요! 아래 문제로 결과를 비교해 봐요.</div>'; renderM2();
+};
+function completeM2(){
+  const m = S.m2; m.done = true;
+  const sc = 10 + Math.max(0, 6 - 2*m.errors) + qPts(m.q.tries);
+  let t = '미션 2에서는 자석을 움직이는 경우와 코일을 움직이는 경우를 모두 실험했어요. ';
+  t += m.errors===0 ? '네 가지 경우의 자기장 변화(증가·감소)와 바늘 방향을 처음부터 정확하게 기록했고, ' : `기록을 확인하는 과정에서 ${m.errors}곳을 다시 관찰하여 고쳤고, `;
+  t += m.q.tries===1 ? '\'상대 운동이 같으면 자기장 변화와 전류 방향도 같다\'는 규칙을 한 번에 찾아냈어요.' : `${m.q.tries}번의 시도 끝에 \'상대 운동이 같으면 결과도 같다\'는 규칙을 정리했어요.`;
+  setBest('m2', sc, {text:t, errors:m.errors, tries:m.q.tries, sel:JSON.parse(JSON.stringify(m.sel))});
+  unlock(3); renderM2(); toast('🎉 미션 2 성공! 미션 3이 열렸어요.');
+}
+$('#m2Reset').onclick = ()=>{ SND.click(); S.m2 = freshM(2); $('#m2Fb').innerHTML=''; delete $('#m2Q').dataset.on; renderM2(); renderTabs(); toast('미션 2를 처음부터 다시 해요.'); };
+$('#m2Next').onclick = ()=>goTab(3);
+
+/* ================= 미션 3 ================= */
+function renderM3(){
+  const m = S.m3;
+  let h = '<tr><th>실험 상황</th><th>실험</th><th>코일을 통과하는 자기장</th><th>유도 전류의 방향<br><span class="c-sub" style="font-size:12px">(자석 쪽에서 본 코일)</span></th></tr>';
+  M3ROWS.forEach(r=>{
+    const ob = m.obs[r.k], sel = m.sel[r.k];
+    const cls = m.bad[r.k]===true ? 'row-bad' : m.bad[r.k]===false ? 'row-good' : '';
+    h += `<tr class="${cls}"><td class="case">${r.label}</td><td>${ob?'✅':'⏳'}</td>
+      <td>${ob ? r.fx : '<span class="c-sub">실험 후 표시</span>'}</td>
+      <td>${pickHTML('m3n', r.k, sel, [['cw','↻ 시계 방향'],['ccw','↺ 시계 반대 방향']], !ob || m.tableOK)}</td></tr>`;
+  });
+  $('#m3Tbl').innerHTML = h;
+  $$('#m3Tbl .pick button').forEach(b=>b.onclick=()=>{ SND.click(); m.sel[b.dataset.k] = b.dataset.v; delete m.bad[b.dataset.k]; renderM3(); });
+  $('#m3Check').disabled = m.tableOK;
+  const box = $('#m3Pairs');
+  if(m.tableOK){
+    let ph = '<h3>🔍 규칙 찾기 : 두 경우의 유도 전류 방향은?</h3><div class="tbl-wrap"><table class="rec"><tr><th>비교하는 두 경우</th><th>유도 전류의 방향</th></tr>';
+    M3PAIRS.forEach(p=>{
+      const cls = m.pairBad[p.k]===true ? 'row-bad' : m.pairBad[p.k]===false ? 'row-good' : '';
+      ph += `<tr class="${cls}"><td class="case">${p.label}</td><td>${pickHTML('m3p', p.k, m.pairSel[p.k], [['same','같다'],['opp','반대']], m.pairOK)}</td></tr>`;
+    });
+    ph += '</table></div><div id="m3PairFb"></div>';
+    ph += `<div class="btn-row"><button class="btn b-purple" id="m3PairCheck" ${m.pairOK?'disabled':''}>규칙 확인하기</button></div>`;
+    const keepFb = $('#m3PairFb') ? $('#m3PairFb').innerHTML : '';
+    box.innerHTML = ph; $('#m3PairFb').innerHTML = keepFb;
+    $$('#m3Pairs .pick button').forEach(b=>b.onclick=()=>{ SND.click(); m.pairSel[b.dataset.k] = b.dataset.v; delete m.pairBad[b.dataset.k]; renderM3(); });
+    $('#m3PairCheck').onclick = checkPairs;
+  } else box.innerHTML = '';
+  $('#m3Concept').innerHTML = m.done ? `<div class="concept"><span class="ttl">📘 개념 정리 · 유도 전류의 방향</span><br>· 자석 쪽에서 볼 때 N극을 가까이 하면 <span class="c-blue">시계 반대 방향</span>, N극을 멀리 하면 <span class="c-orange">시계 방향</span>, S극을 가까이 하면 <span class="c-orange">시계 방향</span>, S극을 멀리 하면 <span class="c-blue">시계 반대 방향</span>으로 유도 전류가 흘러요.<br>· 같은 극에서 <span class="c-blue">가까이 ↔ 멀리</span> : 자기장 증가 ↔ 감소로 변화가 반대 → 전류 방향 <span class="c-red">반대</span><br>· 같은 움직임에서 <span class="c-red">N극 ↔ S극</span> : 자기장의 방향이 반대 → 전류 방향 <span class="c-red">반대</span><br>· N극 가까이와 S극 멀리처럼 <span class="c-purple">두 가지가 모두 바뀌면</span> → 전류 방향 <span class="c-green">같음</span><br>· 유도 전류는 자석의 움직임을 <span class="c-purple">방해하는 방향</span>으로 흘러요. 가까이 하면 밀어내는 힘(척력), 멀리 하면 끌어당기는 힘(인력)이 작용해요.</div>` : '';
+  $('#m3Next').disabled = !m.done;
+}
+$('#m3Check').onclick = ()=>{
+  const m = S.m3;
+  const notRun = M3ROWS.filter(r=>!m.obs[r.k]);
+  if(notRun.length){ SND.bad(); $('#m3Fb').innerHTML = `<div class="fb info">아직 실험하지 않은 상황이 있어요: ${notRun.map(r=>r.label).join(', ')}<br>'코일 쪽을 향한 극'을 바꾸려면 먼저 물체가 멈춰 있어야 해요.</div>`; return; }
+  if(M3ROWS.some(r=>!m.sel[r.k])){ SND.bad(); $('#m3Fb').innerHTML = '<div class="fb info">모든 칸의 유도 전류 방향을 골라 주세요.</div>'; return; }
+  let wrong = 0, msgs = [];
+  M3ROWS.forEach(r=>{ const bad = m.sel[r.k] !== m.obs[r.k].cur; m.bad[r.k] = bad; if(bad){ wrong++; msgs.push(r.label.replace(/<[^>]+>/g,'')); } });
+  if(wrong){ m.errors += wrong; SND.bad(); $('#m3Fb').innerHTML = `<div class="fb bad">❌ ${wrong}곳의 유도 전류 방향이 실제 관찰과 달라요: ${msgs.join(', ')}<br>그 상황을 다시 실험하면서 왼쪽 아래 <span class="c-teal">'자석 쪽에서 본 코일'</span> 창에서 노란 전류 입자가 도는 방향을 잘 보세요. 시계 바늘이 도는 방향과 같으면 시계 방향이에요.</div>`; renderM3(); return; }
+  m.tableOK = true; SND.ok(); $('#m3Fb').innerHTML = '<div class="fb good">⭕ 네 가지 경우의 유도 전류 방향을 모두 정확하게 기록했어요! 이제 규칙을 찾아봐요.</div>'; renderM3();
+};
+function checkPairs(){
+  const m = S.m3;
+  if(M3PAIRS.some(p=>!m.pairSel[p.k])){ SND.bad(); $('#m3PairFb').innerHTML = '<div class="fb info">네 줄 모두 골라 주세요.</div>'; return; }
+  let wrong = 0, msgs = [];
+  const hint = {p1:'같은 N극이라도 가까이 하면 자기장이 증가, 멀리 하면 감소해요. 변화가 반대이면 전류의 방향은?',
+    p2:'둘 다 가까이 하지만 N극과 S극은 자기장의 방향이 반대예요.',
+    p3:'같은 S극에서 가까이(증가)와 멀리(감소)를 비교해 보세요.',
+    p4:'극도 바뀌고(N→S) 변화도 바뀌었어요(증가→감소). 반대가 두 번이면? 표에서 ①과 ④의 유도 전류 방향을 비교해 보세요.'};
+  M3PAIRS.forEach(p=>{ const bad = m.pairSel[p.k] !== p.ans; m.pairBad[p.k] = bad; if(bad){ wrong++; msgs.push(`${p.label}: ${hint[p.k]}`); } });
+  if(wrong){ m.pairErrors += wrong; SND.bad(); renderM3(); $('#m3PairFb').innerHTML = `<div class="fb bad">❌ ${wrong}곳을 다시 생각해 보세요.<br>${msgs.join('<br>')}</div>`; return; }
+  m.pairOK = true; SND.ok(); renderM3(); $('#m3PairFb').innerHTML = '<div class="fb good">⭕ 규칙을 찾았어요! 아래 개념 정리를 확인하세요.</div>';
+  completeM3();
+}
+function completeM3(){
+  const m = S.m3; m.done = true;
+  const sc = 8 + Math.max(0, 6 - 2*m.errors) + Math.max(0, 6 - 2*m.pairErrors);
+  let t = '미션 3에서는 N극과 S극을 바꾸어 가며 네 가지 경우를 실험했어요. ';
+  t += m.errors===0 ? '코일에 흐르는 유도 전류의 방향(시계·시계 반대)을 처음부터 정확하게 관찰·기록했고, ' : `유도 전류 방향 기록에서 ${m.errors}곳을 다시 관찰하여 고쳤고, `;
+  t += m.pairErrors===0 ? '\'자기장의 변화나 자극 중 하나만 바뀌면 전류 방향이 반대\'라는 규칙을 한 번에 찾아냈어요.' : `규칙 찾기에서 ${m.pairErrors}곳을 고친 끝에 전류 방향이 반대가 되는 조건을 정리했어요.`;
+  setBest('m3', sc, {text:t, errors:m.errors, pairErrors:m.pairErrors, sel:Object.assign({}, m.sel)});
+  unlock(4); toast('🎉 미션 3 성공! 미션 4가 열렸어요.'); $('#m3Next').disabled = false;
+}
+$('#m3Reset').onclick = ()=>{ SND.click(); S.m3 = freshM(3); $('#m3Fb').innerHTML=''; $('#m3Pairs').innerHTML=''; renderM3(); renderTabs(); toast('미션 3을 처음부터 다시 해요.'); };
+$('#m3Next').onclick = ()=>goTab(4);
+
+/* ================= 미션 4 ================= */
+const FACT = {sp:'이동 속력', tu:'코일 감은 수', mg:'자석 세기'};
+function factorPair(f){
+  const rs = S.m4.runs.filter(r=>r.sp!==null);
+  const others = {sp:['tu','mg'], tu:['sp','mg'], mg:['sp','tu']}[f];
+  for(let i=0;i<rs.length;i++) for(let j=i+1;j<rs.length;j++){
+    const a = rs[i], b = rs[j];
+    if(a[f] !== b[f] && others.every(o=>a[o]===b[o])) return [a,b];
+  }
+  return null;
+}
+const lvName = (f,v)=> f==='sp' ? SPEED_N[v] : f==='tu' ? TURNS[v]+'회' : MAG_N[v];
+function renderM4(){
+  const m = S.m4;
+  const pr = {sp:factorPair('sp'), tu:factorPair('tu'), mg:factorPair('mg')};
+  const pairTxt = f => pr[f] ? ` <span class="c-teal">(#${pr[f][0].no} ${lvName(f,pr[f][0][f])} ${pr[f][0].peak}% ↔ #${pr[f][1].no} ${lvName(f,pr[f][1][f])} ${pr[f][1].peak}%)</span>` : '';
+  $('#m4List').innerHTML = `
+    <li class="${pr.sp?'ok':''}"><span class="c-blue">이동 속력</span>만 다르게 하여 두 번 이상 실험하기${pairTxt('sp')}</li>
+    <li class="${pr.tu?'ok':''}"><span class="c-orange">코일 감은 수</span>만 다르게 하여 두 번 이상 실험하기${pairTxt('tu')}</li>
+    <li class="${pr.mg?'ok':''}"><span class="c-red">자석 세기</span>만 다르게 하여 두 번 이상 실험하기${pairTxt('mg')}</li>
+    <li class="${m.maxLed>=90?'ok':''}">LED 밝기 <span class="c-pink">90% 이상</span> 만들기 (현재 최고 기록 <span class="c-pink">${m.maxLed}%</span>)</li>`;
+  let h = '<tr><th>번호</th><th>움직인 물체</th><th>이동 속력</th><th>감은 수</th><th>자석 세기</th><th>최대 밝기</th></tr>';
+  if(!m.runs.length) h += '<tr><td colspan="6" class="c-sub">아직 기록이 없어요. 조건을 정하고 \'가까이\'나 \'멀리\'를 눌러 보세요.</td></tr>';
+  m.runs.slice(-12).reverse().forEach(r=>{
+    h += `<tr><td>#${r.no}</td><td>${r.mover==='magnet'?'자석':'코일'}</td><td>${r.sp===null?'<span class="c-sub">끌어서(비교 제외)</span>':SPEED_N[r.sp]}</td><td>${TURNS[r.tu]}회</td><td>${MAG_N[r.mg]}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="bar" style="flex:1"><i style="width:${r.peak}%"></i></div><span class="c-pink">${r.peak}%</span></div></td></tr>`;
+  });
+  $('#m4Tbl').innerHTML = h;
+  const ready = pr.sp && pr.tu && pr.mg && m.maxLed >= 90;
+  const box = $('#m4Concl');
+  if(ready){
+    const rows = [['sp','<span class="c-blue">이동 속력</span>이 빠를수록'],['tu','<span class="c-orange">코일의 감은 수</span>가 많을수록'],['mg','<span class="c-red">자석의 세기</span>가 셀수록']];
+    let ch = '<h3>🧾 결론 정리 : 유도 전류의 세기는?</h3><div class="tbl-wrap"><table class="rec"><tr><th>조건</th><th>유도 전류의 세기</th></tr>';
+    rows.forEach(([k,t])=>{
+      const cls = m.conclBad[k]===true ? 'row-bad' : m.conclBad[k]===false ? 'row-good' : '';
+      ch += `<tr class="${cls}"><td class="case">${t}</td><td>${pickHTML('m4c', k, m.concl[k], [['up','커진다'],['down','작아진다'],['same','변화 없다']], m.conclOK)}</td></tr>`;
+    });
+    ch += '</table></div><div id="m4ConclFb"></div>' + `<div class="btn-row"><button class="btn b-purple" id="m4ConclCheck" ${m.conclOK?'disabled':''}>결론 확인하기</button></div>`;
+    const keep = $('#m4ConclFb') ? $('#m4ConclFb').innerHTML : '';
+    box.innerHTML = ch; $('#m4ConclFb').innerHTML = keep;
+    $$('#m4Concl .pick button').forEach(b=>b.onclick=()=>{ SND.click(); m.concl[b.dataset.k] = b.dataset.v; delete m.conclBad[b.dataset.k]; renderM4(); });
+    $('#m4ConclCheck').onclick = checkConcl;
+  } else box.innerHTML = '';
+  $('#m4Concept').innerHTML = m.done ? `<div class="concept"><span class="ttl">📘 개념 정리 · 유도 전류의 세기</span><br>자석이나 코일을 <span class="c-blue">빠르게</span> 움직일수록, 코일의 <span class="c-orange">감은 수가 많을수록</span>, <span class="c-red">센 자석</span>을 사용할수록 코일을 통과하는 자기장이 짧은 시간 동안 크게 변해 <span class="c-pink">유도 전류의 세기가 커져요</span>. 그래서 검류계 바늘이 더 많이 기울고 LED가 더 밝아져요.</div>` : '';
+  $('#m4Next').disabled = !m.done;
+}
+function checkConcl(){
+  const m = S.m4;
+  if(['sp','tu','mg'].some(k=>!m.concl[k])){ SND.bad(); $('#m4ConclFb').innerHTML = '<div class="fb info">세 줄 모두 골라 주세요.</div>'; return; }
+  let wrong = 0, msgs = [];
+  ['sp','tu','mg'].forEach(k=>{
+    const bad = m.concl[k] !== 'up'; m.conclBad[k] = bad;
+    if(bad){ wrong++; const p = factorPair(k); msgs.push(`${FACT[k]}: 실험 기록 #${p[0].no}(${lvName(k,p[0][k])}, ${p[0].peak}%)와 #${p[1].no}(${lvName(k,p[1][k])}, ${p[1].peak}%)의 최대 밝기를 비교해 보세요.`); }
+  });
+  if(wrong){ m.conclErrors += wrong; SND.bad(); renderM4(); $('#m4ConclFb').innerHTML = `<div class="fb bad">❌ ${wrong}곳을 다시 생각해 보세요.<br>${msgs.join('<br>')}</div>`; return; }
+  m.conclOK = true; SND.ok(); m.done = true;
+  const sc = 14 + Math.max(0, 6 - 2*m.conclErrors);
+  let t = `미션 4에서는 ${m.runs.length}번의 실험을 하며 이동 속력, 코일 감은 수, 자석 세기를 하나씩만 바꾸어 비교하는 공정한 실험을 설계했고, LED 밝기를 최고 ${m.maxLed}%까지 높였어요. `;
+  t += m.conclErrors===0 ? '실험 기록을 근거로 세 가지 요인과 유도 전류 세기의 관계를 한 번에 정확히 결론지었어요.' : `결론 정리에서 ${m.conclErrors}곳을 기록과 다시 비교하여 고쳤어요.`;
+  setBest('m4', sc, {text:t, conclErrors:m.conclErrors, maxLed:m.maxLed, runs:m.runs.length});
+  unlock(5); renderM4(); $('#m4ConclFb').innerHTML = '<div class="fb good">⭕ 완벽한 결론이에요! 학습 점검이 열렸어요.</div>'; toast('🎉 미션 4 성공! 학습 점검이 열렸어요.');
+}
+$('#m4Reset').onclick = ()=>{ SND.click(); S.m4 = freshM(4); $('#m4Concl').innerHTML=''; renderM4(); renderTabs(); toast('미션 4를 처음부터 다시 해요.'); };
+$('#m4Next').onclick = ()=>goTab(5);
+
+/* ================= 학습 점검 ================= */
+const QUIZ = [
+  {q:'전자기 유도에 대한 설명으로 옳은 것은?',
+   opts:['코일에 전류가 흐르면 코일 주위에 자기장이 생기는 현상','코일을 통과하는 자기장이 변할 때 코일에 전류가 흐르는 현상','자석이 철로 된 물체를 끌어당기는 현상','전류가 흐르는 도선이 자기장 속에서 힘을 받는 현상'],
+   ans:1,
+   fb:{0:'그것은 전류가 자기장을 만드는 현상(전류의 자기 작용)이에요. 전자기 유도는 반대로 <span class="c-blue">자기장의 변화</span>로 <span class="c-orange">전류</span>가 생기는 현상이에요.',2:'자석의 성질일 뿐, 전류가 만들어지지 않아요. 미션 1에서 바늘이 언제 움직였는지 떠올려 보세요.',3:'그것은 전동기의 원리예요. 전자기 유도는 전류가 \'만들어지는\' 현상이에요.'},
+   ex:'코일을 통과하는 자기장이 변하면 코일에 유도 전류가 흘러요. 이것이 전자기 유도예요.'},
+  {q:'\'코일을 자석의 N극에 가까이 할 때\'와 코일을 통과하는 자기장의 변화가 같은 경우는?',
+   opts:['자석의 N극을 코일에 가까이 할 때','자석의 N극을 코일에서 멀리 할 때','코일을 자석의 N극에서 멀리 할 때','자석과 코일을 모두 정지시켰을 때'],
+   ans:0,
+   fb:{1:'멀리 하면 코일을 통과하는 자기장이 <span class="c-orange">감소</span>해요. 코일을 가까이 할 때는 <span class="c-green">증가</span>했죠?',2:'멀어지면 자기장이 감소해요. 미션 2 표의 ③과 ④를 비교해 보세요.',3:'정지해 있으면 자기장의 변화가 없어요.'},
+   ex:'무엇을 움직이든 N극과 코일이 <span class="c-purple">가까워지면</span> 코일을 통과하는 자기장의 세기가 증가해요.'},
+  {q:'자석의 N극을 코일에 가까이 할 때 검류계 바늘이 오른쪽으로 움직였다. 바늘이 <span class="c-red">같은 방향(오른쪽)</span>으로 움직이는 경우는?',
+   opts:['N극을 코일에서 멀리 할 때','S극을 코일에 가까이 할 때','S극을 코일에서 멀리 할 때','자석을 코일 가까이에 가만히 둘 때'],
+   ans:2,
+   fb:{0:'가까이 ↔ 멀리는 자기장의 변화(증가 ↔ 감소)가 반대라서 전류 방향도 <span class="c-red">반대</span>예요.',1:'N극 ↔ S극은 자기장의 방향이 반대라서 같은 \'가까이\'라도 전류 방향이 <span class="c-red">반대</span>예요.',3:'움직임이 없으면 자기장의 변화가 없어 바늘은 0에 머물러요.'},
+   ex:'S극을 멀리 하면 자극도 반대, 변화도 반대예요. 반대가 두 번 겹치므로 N극을 가까이 할 때와 같은 방향이에요.'},
+  {q:'유도 전류의 세기를 크게 하는 방법으로 <span class="c-red">옳지 않은</span> 것은?',
+   opts:['자석을 더 빠르게 움직인다.','코일의 감은 수를 늘린다.','더 센 자석을 사용한다.','자석을 코일 바로 옆에 정지시켜 둔다.'],
+   ans:3,
+   fb:{0:'미션 4에서 속력을 \'빠름\'으로 했을 때 LED가 더 밝아졌어요. 이것은 옳은 방법이에요.',1:'감은 수가 많을수록 바늘이 더 많이 기울었어요. 옳은 방법이에요.',2:'자석 세기를 \'강\'으로 했을 때 더 밝아졌어요. 옳은 방법이에요.'},
+   ex:'자석을 정지시키면 아무리 가까워도 자기장의 변화가 없어 유도 전류가 흐르지 않아요.'},
+  {q:'자석의 N극을 코일에서 멀리 할 때에 대한 설명으로 옳은 것은?',
+   opts:['코일을 통과하는 자기장이 증가하고, N극을 가까이 할 때와 같은 방향으로 전류가 흐른다.','코일을 통과하는 자기장이 감소하고, N극을 가까이 할 때와 반대 방향으로 전류가 흐른다.','코일을 통과하는 자기장이 감소하지만 유도 전류는 흐르지 않는다.','코일을 통과하는 자기장이 변하지 않아 유도 전류가 흐르지 않는다.'],
+   ans:1,
+   fb:{0:'멀어지면 코일을 통과하는 자기장은 <span class="c-orange">감소</span>해요.',2:'자기장이 감소하는 것도 \'변화\'예요. 변화가 있으면 유도 전류가 흘러요.',3:'자석이 움직이면 코일을 통과하는 자기장은 변해요.'},
+   ex:'멀어지면 자기장이 감소하고, 가까이 할 때(증가)와 변화가 반대이므로 유도 전류의 방향도 반대예요.'}
+];
+const WRITE = {
+  w1:{title:'서술형 1', q:'자석의 N극을 코일에 가까이 할 때와 코일에서 멀리 할 때 유도 전류의 방향이 반대가 되는 까닭을 <span class="c-blue">코일을 통과하는 자기장의 변화</span>를 이용하여 설명해 보세요.',
+      groups:[{n:'가까이 할 때 코일을 통과하는 자기장이 증가한다는 내용', keys:['증가','세지','세진','커지','커진','강해','많아']},
+              {n:'멀리 할 때 코일을 통과하는 자기장이 감소한다는 내용', keys:['감소','약해','작아','줄어','줄어든']},
+              {n:'자기장의 변화가 반대여서 전류 방향도 반대라는 연결', keys:['변화가반대','반대로변','변화도반대','변화방향','변화의방향','서로반대','반대이']}],
+      sample:'N극을 코일에 가까이 하면 코일을 통과하는 자기장의 세기가 증가하고, 멀리 하면 감소한다. 이처럼 자기장의 변화가 서로 반대이므로 유도 전류의 방향도 반대가 된다.'},
+  w2:{title:'서술형 2', q:'미션 4의 실험 결과를 바탕으로 LED를 더 밝게 켜는 방법 <span class="c-orange">세 가지</span>를 쓰고, 그렇게 하면 유도 전류가 세지는 까닭을 설명해 보세요.',
+      groups:[{n:'자석(코일)을 빠르게 움직이기', keys:['빠르게','빨리','속력','속도']},
+              {n:'코일의 감은 수 늘리기', keys:['감은수','감긴수','많이감','감는수','코일을많이','코일수']},
+              {n:'센 자석 사용하기', keys:['센자석','강한자석','자석의세기','자석세기','자석을세','자석을강','자기력이센','자석을여러','자석의힘']},
+              {n:'코일을 통과하는 자기장의 변화가 커진다는 까닭', keys:['변화가커','변화가크','크게변','많이변','변화량','빠르게변','변화정도','변화가많']}],
+      sample:'자석을 더 빠르게 움직이고, 코일의 감은 수를 늘리고, 더 센 자석을 사용한다. 그러면 코일을 통과하는 자기장이 짧은 시간 동안 더 크게 변하므로 유도 전류의 세기가 커져 LED가 더 밝아진다.'}
+};
+function quizComplete(){ return S.quiz.qs.length===QUIZ.length && S.quiz.qs.every(q=>q.done) && S.wr.w1.subs>0 && S.wr.w2.subs>0; }
+function renderQuiz(){
+  if(S.quiz.qs.length !== QUIZ.length) S.quiz.qs = QUIZ.map(()=>newMC());
+  $('#quizBox').innerHTML = QUIZ.map((q,i)=>`<div class="qcard"><span class="qnum">문제 ${i+1}</span>${mcHTML('qz'+i, q)}</div>`).join('');
+  QUIZ.forEach((q,i)=>bindMC('qz'+i, q, S.quiz.qs[i], ()=>{ checkQuizDone(); }));
+  $('#writeBox').innerHTML = ['w1','w2'].map(k=>{
+    const w = WRITE[k], st = S.wr[k];
+    return `<div class="qcard"><span class="qnum">${w.title}</span><p>${w.q}</p>
+      <textarea id="ta_${k}" placeholder="여기에 답을 써 보세요.">${esc(st.text)}</textarea>
+      <div class="btn-row"><button class="btn b-blue" data-w="${k}">제출하기</button>${st.subs?`<button class="btn" data-s="${k}">예시 답안 보기</button>`:''}</div>
+      <div id="wfb_${k}">${st.subs?writeFbHTML(k):''}</div><div id="ws_${k}"></div></div>`;
+  }).join('');
+  $$('#writeBox [data-w]').forEach(b=>b.onclick=()=>submitWrite(b.dataset.w));
+  $$('#writeBox [data-s]').forEach(b=>b.onclick=()=>{ const box = $('#ws_'+b.dataset.s); box.innerHTML = box.innerHTML ? '' : `<div class="fb info">📗 예시 답안: ${WRITE[b.dataset.s].sample}</div>`; });
+  $('#quizNext').disabled = !quizComplete();
+}
+function writeFbHTML(k){
+  const st = S.wr[k], w = WRITE[k];
+  if(st.ratio >= 1) return `<div class="fb good">⭕ 훌륭해요! 핵심 내용을 모두 담았어요. (반영된 내용 ${w.groups.length}/${w.groups.length})</div>`;
+  return `<div class="fb bad">✏️ 반영된 내용 ${w.groups.length - st.miss.length}/${w.groups.length} — 아래 내용을 보완해 다시 제출해 보세요.<br>${st.miss.map(m=>'· '+m).join('<br>')}</div>`;
+}
+function scoreWrite(k, text){
+  const t = text.replace(/\s/g,'');
+  const miss = [];
+  WRITE[k].groups.forEach(g=>{ if(!g.keys.some(key=>t.includes(key.replace(/\s/g,'')))) miss.push(g.n); });
+  return {ratio:(WRITE[k].groups.length - miss.length)/WRITE[k].groups.length, miss};
+}
+function submitWrite(k){
+  const text = $('#ta_'+k).value.trim();
+  if(text.length < 15){ SND.bad(); $('#wfb_'+k).innerHTML = '<div class="fb info">조금 더 자세히 써 주세요. (15자 이상)</div>'; return; }
+  const r = scoreWrite(k, text);
+  const st = S.wr[k]; st.text = text; st.subs++; st.ratio = r.ratio; st.miss = r.miss;
+  r.ratio >= 1 ? SND.ok() : SND.bad();
+  const sc = Math.round(r.ratio * MAXS[k] * 2)/2;
+  const t = r.ratio >= 1 ? `${WRITE[k].title}에서는 핵심 내용을 빠짐없이 과학 용어로 설명했어요${st.subs>1?' (피드백을 반영해 '+st.subs+'번째 제출에서 완성)':''}.`
+    : `${WRITE[k].title}에서는 ${WRITE[k].groups.length}가지 핵심 내용 중 ${WRITE[k].groups.length - r.miss.length}가지를 설명했어요. ${r.miss.join(', ')}에 대한 내용이 더 들어가면 좋겠어요.`;
+  setBest(k, sc, {text:t, answer:text, miss:r.miss.slice()});
+  renderQuiz();
+  checkQuizDone();
+}
+function checkQuizDone(){
+  const allMC = S.quiz.qs.length===QUIZ.length && S.quiz.qs.every(q=>q.done);
+  if(allMC && !S.quiz.done){
+    S.quiz.done = true;
+    const first = S.quiz.qs.filter(q=>q.tries===1).length;
+    const wrongQs = S.quiz.qs.map((q,i)=>q.tries>1?i+1:null).filter(x=>x);
+    const t = first===QUIZ.length ? `학습 점검 객관식 ${QUIZ.length}문항을 모두 처음 시도에 맞혔어요.` : `학습 점검 객관식 ${QUIZ.length}문항 중 ${first}문항을 처음 시도에 맞혔고, ${wrongQs.join('·')}번 문항은 피드백을 읽고 다시 생각하여 해결했어요.`;
+    setBest('quiz', first*3, {text:t, first, wrongQs});
+  }
+  if(quizComplete()){ unlock(6); $('#quizNext').disabled = false; renderTabs(); }
+}
+$('#quizReset').onclick = ()=>{ SND.click(); S.quiz = {qs:QUIZ.map(()=>newMC()), done:false}; renderQuiz(); toast('객관식을 처음부터 다시 풀어요. 처음 시도에 맞히면 점수가 올라가요.'); };
+$('#quizNext').onclick = ()=>goTab(6);
+
+/* ================= 점수·평가 ================= */
+function setBest(k, score, info){
+  const b = S.best[k];
+  if(!b || score >= b.score){ S.best[k] = Object.assign({score}, info); }
+}
+function totalScore(){ return Object.keys(MAXS).reduce((s,k)=>s + (S.best[k] ? S.best[k].score : 0), 0); }
+function gradeOf(t){ return t>=90?'A':t>=80?'B':t>=70?'C':t>=60?'D':'F'; }
+const GCOL = {A:'#1fae63', B:'#2f6fec', C:'#0b9a99', D:'#f59f00', F:'#e5484d'};
+const GNEXT = {B:90, C:80, D:70, F:60};
+function fmt(n){ return (Math.round(n*10)/10).toString(); }
+function upgradeTips(){
+  const tips = [];
+  Object.keys(MAXS).forEach(k=>{
+    const b = S.best[k]; const got = b ? b.score : 0; const lost = MAXS[k] - got;
+    if(lost <= 0.01) return;
+    let why = '';
+    if(k==='m1') why = '정지 상태에서 전류가 흐르지 않는 까닭을 생각 정리 문제에서 <span class="c-orange">처음 시도에 맞히는</span> 과정이 부족했어요.';
+    if(k==='m2') why = (b && b.errors ? `자기장 변화·바늘 방향 기록에서 <span class="c-orange">${b.errors}곳</span>을 고쳤어요. ` : '') + (b && b.tries>1 ? '결과 비교 문제를 처음 시도에 맞히지 못했어요. ' : '') + '자석을 움직일 때와 코일을 움직일 때를 다시 관찰해 정확히 기록해 보세요.';
+    if(k==='m3') why = (b && b.errors ? `유도 전류 방향 기록에서 <span class="c-orange">${b.errors}곳</span>, ` : '') + (b && b.pairErrors ? `규칙 찾기에서 <span class="c-orange">${b.pairErrors}곳</span>을 고쳤어요. ` : '') + 'N극·S극, 가까이·멀리를 바꾸며 자석 쪽에서 본 코일의 유도 전류 방향을 다시 관찰해 보세요.';
+    if(k==='m4') why = `결론 정리에서 <span class="c-orange">${b?b.conclErrors:0}곳</span>을 고쳤어요. 한 가지 조건만 바꾸어 실험한 기록을 근거로 결론을 다시 정리해 보세요.`;
+    if(k==='quiz') why = b ? `<span class="c-orange">${b.wrongQs.join('·')}번</span> 문항을 처음 시도에 맞히지 못했어요. 객관식을 다시 풀어 보세요.` : '객관식을 아직 끝내지 않았어요.';
+    if(k==='w1'||k==='w2') why = b ? `답안에 빠진 내용: <span class="c-orange">${b.miss.join(', ')}</span>. 보완해서 다시 제출해 보세요.` : '답안을 아직 제출하지 않았어요.';
+    tips.push({k, lost, why});
+  });
+  return tips.sort((a,b)=>b.lost-a.lost);
+}
+function overallFeedback(total, g){
+  const nm = S.name || '학생';
+  const parts = ['m1','m2','m3','m4','quiz','w1','w2'].map(k=>S.best[k] ? S.best[k].text : '').filter(x=>x);
+  let open = `${nm} 학생은 자석과 코일을 직접 움직이며 전자기 유도 현상을 탐구했어요. `;
+  let close = '';
+  if(g==='A') close = '관찰한 사실을 정확하게 기록하고, 기록을 근거로 규칙과 결론을 이끌어 내는 과학적 탐구 과정이 매우 뛰어났어요. 발전기나 무선 충전기처럼 생활 속에서 전자기 유도가 쓰이는 예도 찾아보세요.';
+  else if(g==='B') close = '탐구 과정 대부분을 충실하게 수행했어요. 아래 안내된 부분만 보충하면 A등급에 도달할 수 있어요.';
+  else if(g==='C') close = '전자기 유도의 기본 원리는 이해했지만, 관찰 결과를 정확하게 기록하고 규칙을 찾는 과정에서 보완이 필요해요. 안내된 보충 시뮬레이션을 해 보세요.';
+  else if(g==='D') close = '실험은 해 보았지만 자기장의 변화와 유도 전류의 관계를 정리하는 데 어려움이 있었어요. 부족한 단계를 다시 실험하며 상태 표시창과 검류계를 꼼꼼히 관찰해 보세요.';
+  else close = '아직 완료하지 못했거나 보완이 많이 필요한 단계가 있어요. 아래 안내에 따라 한 단계씩 다시 도전해 보세요. 충분히 해낼 수 있어요!';
+  return open + parts.join(' ') + ' ' + close;
+}
+function renderResult(){
+  const total = totalScore(), g = gradeOf(total);
+  const today = new Date(); const ds = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
+  const rows = Object.keys(MAXS).map(k=>{ const b = S.best[k]; const v = b ? b.score : 0; const pct = v/MAXS[k]*100;
+    return `<tr><td>${NAMES[k]}</td><td style="width:34%"><div class="bar"><i style="width:${pct}%;background:${pct>=99?'#1fae63':pct>=60?'#2f6fec':'#f59f00'}"></i></div></td><td class="pt"><span class="${pct>=99?'c-green':pct>=60?'c-blue':'c-orange'}">${fmt(v)}</span> / ${MAXS[k]}</td></tr>`; }).join('');
+  const b2 = S.best.m2, b3 = S.best.m3;
+  const fxT = v => v==='inc' ? '<span class="c-green">증가</span>' : v==='dec' ? '<span class="c-orange">감소</span>' : '-';
+  const ndT = v => v==='R' ? '<span class="c-red">오른쪽</span>' : v==='L' ? '<span class="c-blue">왼쪽</span>' : '-';
+  const m2rows = M2ROWS.map(r=>{ const s = b2 && b2.sel[r.k] || {}; return `<tr><td class="case">${r.label}</td><td>${fxT(s.flux)}</td><td>${ndT(s.needle)}</td></tr>`; }).join('');
+  const curT = v => v==='cw' ? '<span class="c-orange">↻ 시계 방향</span>' : v==='ccw' ? '<span class="c-blue">↺ 시계 반대 방향</span>' : '-';
+  const m3rows = M3ROWS.map(r=>{ const s = b3 && b3.sel[r.k]; return `<tr><td class="case">${r.label}</td><td>${r.fx}</td><td>${curT(s)}</td></tr>`; }).join('');
+  const nextLine = g==='A' ? '<span class="c-green">최고 등급 달성! 모든 탐구 과정을 훌륭하게 마쳤어요.</span>' : `<span class="c-orange">${GNEXT[g]-total>0?fmt(GNEXT[g]-total):0}점</span>을 더 얻으면 <span class="c-blue">${gradeOf(GNEXT[g])}등급</span>으로 올라갈 수 있어요.`;
+  $('#resultCard').innerHTML = `
+    <div class="rc-head"><div><div class="rc-title">🏆 전자기 유도 탐구 미션 성공!</div><div class="c-sub" style="font-size:14px">통합과학 · 전자기 유도 시뮬레이션 학습 결과지</div></div>
+      <div style="text-align:right"><img src="${LOGO}" alt="EARTH LJY"><div class="c-blue" style="font-size:12px">earthljy@ai.jne.kr</div></div></div>
+    <div class="rc-info">
+      <div class="grade" style="background:${GCOL[g]}">${g}</div>
+      <div style="flex:1;min-width:200px;line-height:1.8">
+        <div>학번 <span class="c-blue">${esc(S.sid)}</span> · 이름 <span class="c-blue">${esc(S.name)}</span></div>
+        <div>총점 <span class="c-pink" style="font-size:22px">${fmt(total)}</span> / 100 · 평가일 ${ds}</div>
+        <div style="font-size:14px">${nextLine}</div>
+        <div class="c-sub" style="font-size:13px">평가 기준: A 90점 이상 · B 80점 이상 · C 70점 이상 · D 60점 이상 · F 60점 미만</div>
+      </div>
+    </div>
+    <table class="score-tbl">${rows}</table>
+    <div class="rc-sec"><div class="h">🔄 미션 2 · 자기장의 변화 기록</div>
+      <table class="rec" style="min-width:0;font-size:14px"><tr><th>상황</th><th>자기장</th><th>바늘</th></tr>${m2rows}</table></div>
+    <div class="rc-sec"><div class="h">🧭 미션 3 · 유도 전류의 방향 기록</div>
+      <table class="rec" style="min-width:0;font-size:14px"><tr><th>상황</th><th>코일을 통과하는 자기장</th><th>유도 전류 방향<br><span style="font-size:11px">(자석 쪽에서 볼 때)</span></th></tr>${m3rows}</table></div>
+    <div class="rc-sec"><div class="h">💡 미션 4 · 최대 밝기 발전소</div>
+      <div class="ans">${S.best.m4 ? `실험 ${S.best.m4.runs}회 · LED 최고 밝기 ${S.best.m4.maxLed}% · 결론: 속력이 빠를수록, 감은 수가 많을수록, 자석이 셀수록 유도 전류의 세기가 커진다.` : '미완료'}</div></div>
+    <div class="rc-sec"><div class="h">✍️ 서술형 1 답안 <span class="c-sub" style="font-size:13px">(${S.best.w1?fmt(S.best.w1.score):0}/${MAXS.w1}점)</span></div><div class="ans">${S.best.w1 ? esc(S.best.w1.answer) : '미제출'}</div></div>
+    <div class="rc-sec"><div class="h">✍️ 서술형 2 답안 <span class="c-sub" style="font-size:13px">(${S.best.w2?fmt(S.best.w2.score):0}/${MAXS.w2}점)</span></div><div class="ans">${S.best.w2 ? esc(S.best.w2.answer) : '미제출'}</div></div>
+    <div class="rc-sec"><div class="h">📋 과제 수행 과정 피드백</div><div class="feedback-text">${overallFeedback(total, g)}</div></div>
+    <div class="c-sub" style="text-align:center;font-size:12px;margin-top:14px">EARTH LJY · earthljy@ai.jne.kr</div>`;
+  // 등급 상향 안내
+  const tips = upgradeTips();
+  let u = '<h2>📈 등급 올리기 안내</h2>';
+  if(g==='A' && !tips.length) u += '<p class="c-green">모든 과정을 만점으로 수행했어요! 더 보충할 시뮬레이션이 없어요. 🎉</p>';
+  else {
+    u += g==='A' ? '<p>이미 최고 등급이에요. 만점을 원하면 아래 부분만 보충해 보세요.</p>'
+      : `<p>${nextLine} 아래는 <span class="c-orange">점수가 부족한 수행 과정</span>만 모은 목록이에요. 점수를 많이 올릴 수 있는 순서대로 정리했어요. 다시 해도 <span class="c-green">가장 좋은 기록</span>이 남으니 안심하고 도전하세요.</p>`;
+    tips.forEach(t=>{
+      const lbl = (t.k==='w1'||t.k==='w2') ? '답안 보완하기' : t.k==='quiz' ? '객관식 다시 풀기' : '보충 시뮬레이션 하기';
+      u += `<div class="up-item"><div class="txt"><span class="c-purple">${NAMES[t.k]}</span> <span class="c-pink">(최대 +${fmt(t.lost)}점)</span><br>${t.why}</div><button class="btn b-orange" data-redo="${t.k}">${lbl} ▶</button></div>`;
+    });
+  }
+  $('#upgradeBox').innerHTML = u;
+  $$('#upgradeBox [data-redo]').forEach(b=>b.onclick=()=>redo(b.dataset.redo));
+}
+function redo(k){
+  if(k==='m1'){ S.m1 = freshM(1); delete $('#m1Q').dataset.on; goTab(1); }
+  else if(k==='m2'){ S.m2 = freshM(2); $('#m2Fb').innerHTML=''; delete $('#m2Q').dataset.on; goTab(2); }
+  else if(k==='m3'){ S.m3 = freshM(3); $('#m3Fb').innerHTML=''; $('#m3Pairs').innerHTML=''; goTab(3); }
+  else if(k==='m4'){ S.m4 = freshM(4); $('#m4Concl').innerHTML=''; goTab(4); }
+  else if(k==='quiz'){ S.quiz = {qs:QUIZ.map(()=>newMC()), done:false}; goTab(5); }
+  else { goTab(5); setTimeout(()=>{ const ta = $('#ta_'+k); if(ta){ ta.scrollIntoView({behavior:'smooth', block:'center'}); ta.focus(); } }, 300); }
+  toast('보충 활동을 마친 뒤 \'🏆 결과로 돌아가기\'를 누르면 새 점수가 반영돼요.', 3400);
+}
+$('#floatBack').onclick = ()=>goTab(6);
+
+/* ================= 결과 이미지 (아이패드 대응) ================= */
+let previewBlob = null, previewFile = null, previewName = '';
+function canvasToURL(c){
+  if(!c || !c.width || !c.height) return null;
+  try{
+    const g = c.getContext('2d');
+    const px = g.getImageData(Math.floor(c.width/2), Math.floor(c.height/2), 1, 1).data;
+    if(px[3] === 0) return null;
+    const url = c.toDataURL('image/png');
+    return url && url.length > 2000 ? url : null;
+  }catch(e){ return null; }
+}
+function dataURLtoBlob(url){
+  const [h, b64] = url.split(','); const mime = h.match(/:(.*?);/)[1];
+  const bin = atob(b64); const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type:mime});
+}
+async function makeResultImage(){
+  if(typeof html2canvas === 'undefined'){ SND.bad(); toast('이미지 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.', 3600); return; }
+  const card = $('#resultCard'), btn = $('#btnMakeImg');
+  btn.disabled = true; btn.textContent = '⏳ 이미지 만드는 중...';
+  const w = card.offsetWidth, h = card.offsetHeight;
+  const AREA = isIOS ? 12000000 : 30000000, SIDE = isIOS ? 8000 : 16000;
+  let scale = Math.min(2, Math.sqrt(AREA/(w*h)), SIDE/Math.max(w,h));
+  let url = null;
+  for(let i=0; i<4 && !url; i++){
+    try{
+      const c = await html2canvas(card, {scale, backgroundColor:'#ffffff', useCORS:true, logging:false, scrollX:0, scrollY:-window.scrollY});
+      url = canvasToURL(c);
+    }catch(e){ url = null; }
+    if(!url) scale *= 0.6;
+  }
+  btn.disabled = false; btn.textContent = '📷 결과 이미지 저장하기';
+  if(!url){ SND.bad(); toast('이미지를 만들지 못했어요. 잠시 후 다시 눌러 주세요.', 3200); return; }
+  previewName = `전자기유도_결과_${(S.sid||'학번')}_${(S.name||'이름')}.png`.replace(/[\\/:*?"<>|\s]/g,'_');
+  previewBlob = dataURLtoBlob(url);
+  try{ previewFile = new File([previewBlob], previewName, {type:'image/png'}); }catch(e){ previewFile = null; }
+  $('#previewImg').src = url;
+  $('#saveGuide').innerHTML = isIOS
+    ? '📱 아이패드·아이폰: <span class="c-blue">\'이미지 저장하기\'</span>를 누르면 공유 창이 열려요. <span class="c-green">\'이미지 저장\'</span> 또는 <span class="c-green">\'파일에 저장\'</span>을 고르세요.<br>버튼이 작동하지 않으면 위 이미지를 <span class="c-orange">길게 눌러 \'사진 앱에 저장\'</span>을 선택하세요.'
+    : '💻 PC·안드로이드: <span class="c-blue">\'이미지 저장하기\'</span>를 누르면 PNG 파일로 바로 내려받아요. (다운로드 폴더를 확인하세요)';
+  $('#imgModal').classList.remove('hidden');
+  SND.ok();
+}
+async function saveImage(){
+  if(!previewBlob) return;
+  if(isIOS){
+    if(previewFile && navigator.canShare && navigator.share){
+      let ok = false; try{ ok = navigator.canShare({files:[previewFile]}); }catch(e){ ok = false; }
+      if(ok){
+        try{ await navigator.share({files:[previewFile], title:'전자기 유도 탐구 결과'}); }
+        catch(e){ if(e && e.name !== 'AbortError') toast('공유 창을 열 수 없어요. 이미지를 길게 눌러 \'사진 앱에 저장\'을 선택하세요.', 3800); }
+        return;
+      }
+    }
+    toast('이미지를 길게 눌러 \'사진 앱에 저장\'을 선택하세요.', 3800);
+    return;
+  }
+  const a = document.createElement('a');
+  const href = URL.createObjectURL(previewBlob);
+  a.href = href; a.download = previewName; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(href); a.remove(); }, 1500);
+  toast('💾 결과 이미지 파일을 내려받았어요.');
+}
+$('#btnMakeImg').onclick = makeResultImage;
+$('#btnSaveImg').onclick = saveImage;
+$('#btnCloseModal').onclick = ()=>$('#imgModal').classList.add('hidden');
+$('#imgModal').addEventListener('click', e=>{ if(e.target.id==='imgModal') $('#imgModal').classList.add('hidden'); });
+
+/* ================= 시작 ================= */
+$('#btnStart').onclick = ()=>{
+  const sid = $('#inSid').value.trim(), nm = $('#inName').value.trim();
+  if(!sid || !nm){ SND.bad(); toast('학번과 이름을 모두 입력해 주세요.'); return; }
+  S.sid = sid; S.name = nm; unlock(1); goTab(1); toast(`${esc(nm)} 학생, 실험을 시작해요! ⚡`);
+};
+function init(){
+  setupCanvas();
+  $('#logoImg').src = LOGO;
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(S.tab===6) renderResult(); });
+  renderTabs();
+  window.addEventListener('resize', setupCanvas);
+  requestAnimationFrame(t=>{ lastT = t; requestAnimationFrame(loop); });
+}
+init();
+</script>
+</body>
+</html>
